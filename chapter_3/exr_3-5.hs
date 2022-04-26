@@ -1,0 +1,17 @@
+------------------------------------------------------
+--  EXERCISE 3.5 - PROGRAMMING IN HASKELL - HUTTON  --
+------------------------------------------------------
+
+-- It is not feasible in general for function types to be instances of the Eq
+-- class because most of the types consist of an infinite collection of values,
+-- hence almost every function has a domain which is an infinite set. Verifying
+-- whether two functions of the same type are equal (i.e., have the same values
+-- for each possible argument in the domain) would in such a case entail
+-- comparing an infinite number of values, or else somehow proving in an
+-- abstract manner that the expressions which define them always yield the same
+-- value for each valid argument.
+--
+-- An example where it would be feasible to compare two functions f and g for
+-- equality is that in which their types is: Bool -> Bool -> Int, for in this
+-- case the set of all possible arguments x, y has only four elements: 
+-- (True, True), (True, False), (False, True), (False, True).
