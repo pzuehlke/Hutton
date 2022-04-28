@@ -110,8 +110,8 @@ crack str = decode factor str
 
 -- An additional related function, not really necessary for the task:
 
--- | Toggle between upper- and lowercase characters.
 {--
+-- | Toggle between upper- and lowercase characters.
 toggleCase :: Char -> Char
 toggleCase c    | lower c   = intToUpper (lowerToInt c)
                 | upper c   = intToLower (upperToInt c)

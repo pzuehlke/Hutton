@@ -1,0 +1,844 @@
+%LaTeX
+\ProvidesPackage{gewoehn}
+\usepackage{amsmath,amsthm,amssymb}
+%\usepackage[mathscr]{eucal}
+\usepackage{geometry}
+\usepackage{graphicx}
+%\usepackage[all]{xy}
+\usepackage[letterspace=125]{microtype}
+\usepackage{ifthen}
+\usepackage{enumitem}
+\setenumerate[0]{label=(\alph*)}
+%\usepackage[perpage,symbol*]{footmisc}
+%\DefineFNsymbols{cfoot}{\textdagger \textdaggerdbl {\textdagger\textdagger} 
+	%{\textdaggerdbl\textdaggerdbl}} 
+%\setfnsymbol{cfoot}
+\synctex=1
+%\usepackage{epstopdf}
+%\DeclareGraphicsExtensions{.eps}
+\usepackage[usenames,dvipsnames]{xcolor}
+%\usepackage{hyperref}
+%\definecolor{linkc}{rgb}{0,0.2,0.6}
+%\hypersetup{pdfstartview=XYZ null null 1.27, pdfpagemode=UseOutlines, 
+	%citecolor = {black},colorlinks,breaklinks,urlcolor=linkc,linkcolor={black}}
+
+%## Formatting
+\newcommand{\parag}{\begin{center}$\ast\ast\ast$\end{center}\smallskip}
+%\mathsurround = 1pt
+%\renewcommand{\refname}{References}
+
+\newboolean{numbered}
+\newcommand{\bfsection}[2][true] {%
+	\setboolean{numbered}{#1}%
+	\renewcommand{\thesection}{{\upshape \bfseries \S\hspace{0.8pt}\arabic{section}}}%
+	\ifthenelse{\boolean{numbered}}%
+	{\section{\upshape \bfseries #2}}%
+	{\section*{\upshape \bfseries #2}}%
+	\renewcommand{\thesection}{\arabic{section}}%
+}
+%\renewcommand{\labelenumi}{{\normalfont (\alph{enumi})}} 
+%\renewcommand{\qedsymbol}{\ensuremath{\blacksquare}}
+
+%## Greek Alphabet
+\newcommand{\vphi}{\ensuremath{\varphi}}
+\newcommand{\veps}{\ensuremath{\varepsilon}}
+\newcommand{\al}{\ensuremath{\alpha}}
+\newcommand{\be}{\ensuremath{\beta}}
+\newcommand{\ga}{\ensuremath{\gamma}}
+\newcommand{\Ga}{\ensuremath{\Gamma}}
+\newcommand{\de}{\ensuremath{\delta}}
+\newcommand{\De}{\ensuremath{\Delta}}
+\newcommand{\eps}{\ensuremath{\varepsilon}}
+\newcommand{\ze}{\ensuremath{\zeta}}
+\newcommand{\vtheta}{\ensuremath{\vartheta}}
+\newcommand{\io}{\ensuremath{\iota}}
+\newcommand{\ka}{\ensuremath{\kappa}}
+\newcommand{\vka}{\ensuremath{\varkappa}}
+\newcommand{\la}{\ensuremath{\lambda}}
+\newcommand{\La}{\ensuremath{\Lambda}}
+\newcommand{\vpi}{\ensuremath{\varpi}}
+\newcommand{\vrho}{\ensuremath{\varrho}}
+\newcommand{\sig}{\ensuremath{\sigma}}
+\newcommand{\vsig}{\ensuremath{\varsigma}}
+\newcommand{\Sig}{\ensuremath{\Sigma}}
+\newcommand{\om}{\ensuremath{\omega}}
+\newcommand{\Om}{\ensuremath{\Omega}}
+
+%## Special sets
+
+\DeclareOption{bf}{
+	\newcommand{\C}{\ensuremath{\mathbf{C}}}
+	\newcommand{\N}{\ensuremath{\mathbf{N}}}
+	\newcommand{\Q}{\ensuremath{\mathbf{Q}}}
+	\newcommand{\R}{\ensuremath{\mathbf{R}}}
+	\newcommand{\Z}{\ensuremath{\mathbf{Z}}}
+	\newcommand{\Hh}{\ensuremath{\mathbf{H}}}
+	\newcommand{\Ss}{\ensuremath{\mathbf{S}}}
+	\newcommand{\D}{\ensuremath{\mathbf{D}}}
+	\newcommand{\RP}{\ensuremath{\mathbf{RP}}}
+	\newcommand{\CP}{\ensuremath{\mathbf{CP}}}
+	\newcommand{\HP}{\ensuremath{\mathbf{HP}}}
+	\newcommand{\GL}{\ensuremath{\mathbf{GL}}}
+	\newcommand{\SL}{\ensuremath{\mathbf{SL}}}
+	\newcommand{\PGL}{\ensuremath{\mathbf{PGL}}}
+	\newcommand{\PSL}{\ensuremath{\mathbf{PSL}}}
+	\newcommand{\SO}{\ensuremath{\mathbf{SO}}}
+	\newcommand{\Oo}{\ensuremath{\mathbf{O}}}
+	\newcommand{\Sp}{\ensuremath{\mathbf{Sp}}}
+	\newcommand{\E}{\ensuremath{\mathbf{E}}}
+	%\newcommand*{\zmod}[1]{\Z/#1\Z}
+}
+
+\DeclareOption{bb}{
+	\newcommand{\C}{\ensuremath{\mathbb{C}}}
+	\newcommand{\N}{\ensuremath{\mathbb{N}}}
+	\newcommand{\Q}{\ensuremath{\mathbb{Q}}}
+	\newcommand{\R}{\ensuremath{\mathbb{R}}}
+	\newcommand{\Z}{\ensuremath{\mathbb{Z}}}
+	\newcommand{\Hh}{\ensuremath{\mathbb{H}}}
+	\newcommand{\Ss}{\ensuremath{\mathbb{S}}}
+	\newcommand{\D}{\ensuremath{\mathbb{D}}}
+	\newcommand{\RP}{\ensuremath{\mathbb{R}\mathrm{P}}}
+	\newcommand{\CP}{\ensuremath{\mathbb{C}\mathrm{P}}}
+	\newcommand{\HP}{\ensuremath{\mathbb{H}\mathrm{P}}}
+	\newcommand{\GL}{\ensuremath{\mathrm{GL}}}
+	\newcommand{\SL}{\ensuremath{\mathrm{SL}}}
+	\newcommand{\PGL}{\ensuremath{\mathrm{PGL}}}
+	\newcommand{\PSL}{\ensuremath{\mathrm{PSL}}}
+	\newcommand{\SO}{\ensuremath{\mathrm{SO}}}
+	\newcommand{\Oo}{\ensuremath{\mathrm{O}}}
+	\newcommand{\Sp}{\ensuremath{\mathrm{Sp}}}
+	\newcommand{\E}{\ensuremath{\mathbb{E}}}
+	%\newcommand*{\zmod}[1]{\Z/#1\Z}
+}
+
+\DeclareOption{sf}{
+	\newcommand{\C}{\ensuremath{\mathbb{C}}}
+	\newcommand{\N}{\ensuremath{\mathbb{N}}}
+	\newcommand{\Q}{\ensuremath{\mathbb{Q}}}
+	\newcommand{\R}{\ensuremath{\mathbb{R}}}
+	\newcommand{\Z}{\ensuremath{\mathbb{Z}}}
+	\newcommand{\Hh}{\ensuremath{\mathbb{H}}}
+	\newcommand{\Ss}{\ensuremath{\mathbb{S}}}
+	\newcommand{\D}{\ensuremath{\mathbb{D}}}
+	\newcommand{\RP}{\ensuremath{\mathbb{RP}}}
+	\newcommand{\CP}{\ensuremath{\mathbb{CP}}}
+	\newcommand{\HP}{\ensuremath{\mathbb{HP}}}
+	\newcommand{\GL}{\ensuremath{\mathsf{GL}}}
+	\newcommand{\SL}{\ensuremath{\mathsf{SL}}}
+	\newcommand{\PGL}{\ensuremath{\mathsf{PGL}}}
+	\newcommand{\PSL}{\ensuremath{\mathsf{PSL}}}
+	\newcommand{\SO}{\ensuremath{\mathsf{SO}}}
+	\newcommand{\Oo}{\ensuremath{\mathsf{O}}}
+	\newcommand{\Sp}{\ensuremath{\mathsf{Sp}}}
+	\newcommand{\E}{\ensuremath{\mathbb{E}}}
+	%\newcommand*{\zmod}[1]{\Z/#1\Z}
+}
+
+\newcommand{\agl}{\ensuremath{\mathfrak{gl}}}
+\newcommand{\asl}{\ensuremath{\mathfrak{sl}}}
+\newcommand{\aso}{\ensuremath{\mathfrak{so}}}
+\newcommand{\asp}{\ensuremath{\mathfrak{sp}}}
+
+%## Font and spacing
+\newcommand{\tem}{\textsl}
+\newcommand{\tdfn}{\textit}
+\newcommand{\tbf}{\textbf}
+\newcommand{\tup}{\textup}
+\newcommand{\tit}{\textit}
+\newcommand{\tsl}{\textsl}
+\newcommand{\tsc}{\textsc}
+\newcommand{\ltsc}[1]{{\large\textsc{#1}}}
+\newcommand{\ttt}{\texttt}
+\newcommand{\tsf}{\textsf}
+\newcommand{\tsp}{\textls}
+\newcommand{\tdef}[1]{\textls{\textit{#1}}}
+\newcommand{\fr}[1]{\ensuremath{\mathfrak{#1}}}
+\newcommand*{\sr}[1]{\ensuremath{\mathscr{#1}}}
+\newcommand*{\cat}[1]{\ensuremath{\mathscr{#1}}}
+\newcommand*{\mbf}[1]{\boldsymbol{#1}}
+%\newcommand*{\cal}[1]{\ensuremath{\mathcal{#1}}}
+\newcommand{\?}{\ensuremath{\mspace{2mu}}}
+\newcommand{\sz}{\ensuremath{\mspace{2mu}}}
+\newcommand{\ssk}{\smallskip}
+\newcommand{\msk}{\medskip}
+\newcommand{\bsk}{\bigskip}
+\newcommand{\vs}[1]{\vspace{#1}}
+\newcommand{\noin}{\noindent}
+
+%## Accents
+\newcommand{\ol}{\overline}
+\newcommand{\ul}{\underline}
+\newcommand{\ub}{\underbrace}
+\newcommand{\ob}{\overbrace}
+\newcommand{\os}{\overset}
+\newcommand{\wt}{\widetilde}
+\newcommand{\wh}{\widehat}
+\newcommand{\te}{\tilde}
+\newcommand{\ce}{\check}
+\newcommand{\br}{\breve}
+\newcommand{\bbar}[1]{\bar{\bar #1}}
+\newcommand{\oo}[1]{#1$^\textup{\scriptsize\b{o}}$}
+\newcommand{\oa}[1]{#1$^\textup{\scriptsize\b{a}}$}
+\newcommand{\ordi}[2]{#1$^\textup{\scriptsize{#2}}$}
+\newcommand{\ufield}[1]{\underline{\phantom{\hspace{#1pt}}}}
+
+
+%## Operators
+\newcommand*{\abs}[1]{\left\vert#1\right\vert}
+\newcommand*{\norm}[1]{\left\Vert#1\right\Vert}
+\newcommand*{\flo}[1]{\left\lfloor#1\right\rfloor}
+\newcommand*{\cei}[1]{\left\lceil#1\right\rceil}
+\newcommand{\gen}[1]{\left\langle#1\right\rangle}
+\newcommand{\ggen}[1]{\pmb\langle#1\pmb\rangle}
+\newcommand{\se}[1]{\,\left\{#1\right\}\,}
+%\newcommand{\set}[2]{\big\{\,#1\,\setsepa\,#2\big\}\,}
+\newcommand{\set}[2]{\big\{#1\,\setsep\,#2\big\}}
+\newcommand{\setsep}{\text{\ \large$\pmb\vert$\ }}
+\newcommand{\setsepa}{\text{\ \large$:$\ }}
+%\newcommand{\setsepa}{\,\, {\vert\leavevmode \kern-0.3em\vert}\,\,}
+\newcommand{\ssum}[1]{\sideset{}{'}{\sum}_{\substack{#1}}}
+\newcommand{\cont}{\text{\Large$\mspace{1mu}\lrcorner\mspace{1mu}$}}
+\newcommand{\adj}{\dashv}
+%\newcommand{\Int}{\mamtthring}
+\newcommand{\ring}{\mathring}
+\newcommand{\dlim}{\varinjlim}
+\newcommand{\ilim}{\varprojlim}
+\DeclareMathOperator{\icd}{{\textrm{\,\Small I\,}}}
+%\newcommand{\icd}{\scriptsize{I}\,}
+\DeclareMathOperator{\real}{Re}
+\DeclareMathOperator{\imag}{Im}
+\renewcommand{\Im}{\imag}
+\renewcommand{\Re}{\real}
+\DeclareMathOperator{\Res}{Res}
+\DeclareMathOperator{\Int}{Int}
+\DeclareMathOperator{\arccot}{arccot}
+\DeclareMathOperator{\im}{im}
+\DeclareMathOperator{\coker}{coker}
+\DeclareMathOperator{\id}{id}
+\DeclareMathOperator{\pr}{pr}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\End}{End}
+\DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\Sym}{Sym}
+\DeclareMathOperator{\cha}{\mathrel{char}}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\Aut}{Aut}
+\DeclareMathOperator{\Ext}{Ext}
+\DeclareMathOperator{\ext}{ext}
+\DeclareMathOperator{\Tor}{Tor}
+\DeclareMathOperator{\rad}{rad}
+\DeclareMathOperator{\ann}{ann}
+\DeclareMathOperator{\Spec}{Spec}
+\DeclareMathOperator{\supp}{supp}
+\DeclareMathOperator{\Alt}{Alt}
+\DeclareMathOperator{\rel}{rel}
+\DeclareMathOperator{\stab}{stab}
+\DeclareMathOperator{\Stab}{Stab}
+\DeclareMathOperator{\orb}{orb}
+\DeclareMathOperator{\Orb}{Orb}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\limi}{\ensuremath{\underline{lim}}}
+\DeclareMathOperator{\lims}{\ensuremath{\overline{lim}}}
+\DeclareMathOperator*{\Ast}{\raisebox{-0.2ex}{\scalebox{1.6}{$\ast$}}}
+\DeclareMathOperator{\Free}{Free}
+\DeclareMathOperator{\midd}{median}
+\DeclareMathOperator{\diam}{diam}
+\DeclareMathOperator{\area}{area}
+\DeclareMathOperator{\Area}{area}
+\DeclareMathOperator{\Vol}{Vol}
+\DeclareMathOperator{\vol}{vol}
+\DeclareMathOperator{\length}{length}
+\DeclareMathOperator{\tot}{tot}
+%\DeclareMathOperator{\grad}{grad}
+\DeclareMathOperator{\curl}{curl}
+\DeclareMathOperator{\rot}{rot}
+\DeclareMathOperator{\divr}{div}
+\DeclareMathOperator{\arccoth}{arccoth}
+\DeclareMathOperator{\arctanh}{arctanh}
+\DeclareMathOperator{\Iso}{Iso}
+\DeclareMathOperator{\Diff}{Diff}
+\DeclareMathOperator{\Homeo}{Homeo}
+\DeclareMathOperator{\spa}{span}
+\DeclareMathOperator{\Mat}{Mat}
+\DeclareMathOperator{\ang}{\raisebox{0.25ex}{$\sphericalangle$}}
+
+
+
+
+%## Other symbols and relations
+\newcommand{\ii}{\textrm{i}}
+\newcommand{\ee}{\textrm{e}}
+\newcommand{\nor}{\lhd}
+\newcommand{\ron}{\rhd}
+\newcommand{\grad}{\nabla}
+\newcommand{\del}{\nabla}
+\newcommand{\bd}{\partial}
+\newcommand{\nin}{\notin}
+\newcommand{\iso}{\simeq}
+\newcommand{\home}{\approx}
+\newcommand{\lan}{\langle}
+\newcommand{\ran}{\rangle}
+\newcommand{\lar}{\ensuremath{\leftarrow}}
+\newcommand{\rar}{\ensuremath{\rightarrow}}
+\newcommand{\dar}{\ensuremath{\leftrightarrow}}
+\newcommand{\incr}{\text{\small$\mspace{1mu}\nearrow\mspace{1mu}$}}
+\newcommand{\decr}{\text{\small$\mspace{1mu}\searrow\mspace{2mu}$}}
+\newcommand*{\lto}[1]{\overset{#1}{\longrightarrow}}
+\newcommand*{\llto}[1]{\overset{#1}{\longleftarrow}}
+\newcommand*{\linc}[1]{\overset{#1}{\lhook\joinrel\relbar\joinrel\rightarrow}}
+\newcommand{\lin}[1]{\overset{\longleftrightarrow}{#1}}
+\newcommand{\Rar}{\ensuremath{\Rightarrow}}
+\newcommand{\Lar}{\ensuremath{\Leftarrow}}
+\newcommand{\Dar}{\ensuremath{\Leftrightarrow}}
+\newcommand{\mrar}{\rightarrowtail}
+\newcommand{\erar}{\twoheadrightarrow}
+\newcommand{\mto}{\rightarrowtail}
+\newcommand{\eto}{\twoheadrightarrow}
+\newcommand{\act}{\curvearrowright}
+\newcommand{\subs}{\subset}
+\newcommand{\nsubs}{\not\subset}
+\newcommand{\sups}{\supset}
+\newcommand{\nsups}{\not\supset}
+\newcommand{\sube}{\subseteq}
+\newcommand{\nsube}{\not\subseteq}
+\newcommand{\supe}{\supseteq}
+\newcommand{\nsupe}{\not\supseteq}
+\newcommand{\psubs}{\subsetneq}
+\newcommand{\psups}{\supsetneq}
+\newcommand{\ssm}{\smallsetminus}
+\newcommand{\x}{\times}
+\newcommand{\we}{\wedge}
+\newcommand{\bcup}{\bigcup}
+\newcommand{\bcap}{\bigcap}
+\newcommand{\du}{\sqcup}
+\newcommand{\Du}{\bigsqcup}
+\newcommand{\bdu}{\bigsqcup}
+\newcommand{\inc}{\hookrightarrow}
+\newcommand{\sd}{\rtimes}
+\newcommand{\ten}{\otimes}
+\newcommand{\ds}{\oplus}
+\newcommand{\Ds}{\bigoplus}
+\newcommand{\Wedge}{\bigwedge}
+\newcommand{\Vee}{\bigvee}
+\newcommand{\ca}{\frown}
+\newcommand{\cu}{\smile}
+\newcommand{\con}{\equiv}
+\newcommand{\seg}{\overline}
+\newcommand{\ray}{\overrightarrow}
+\newcommand{\tri}{\triangle}
+\newcommand{\an}{\angle}
+\newcommand{\san}{\sphericalangle}
+\newcommand{\pl}{\parallel}
+\newcommand{\prl}{\mathbin{\!/\mkern-5mu/\!}}
+\newcommand{\arc}[1]{\overset{\frown}{#1}}
+\newcommand{\no}{\mathbf{n}}
+\newcommand{\ta}{\mathbf{t}}
+\newcommand{\po}{\preccurlyeq}
+\newcommand{\op}{\succcurlyeq}
+\newcommand{\bi}{\mbf{i}}
+\newcommand{\bj}{\mbf{j}}
+\newcommand{\bk}{\mbf{k}}
+\newcommand{\aast}{\ast\ast}
+\newcommand{\aaast}{\ast\ast\ast}
+\newcommand{\sbu}{\small$\bullet$}
+\newcommand{\Sbu}{\Small$\bullet$}
+\newcommand{\bs}{\ensuremath{\backslash}}
+\newcommand{\tb}{\raisebox{0.30ex}{\tiny$\bullet$}}
+\newcommand{\tc}{\raisebox{0.15ex}{\tiny$\circ$}}
+\newcommand*{\vdh}{\rule[-1ex]{0.5pt}{2.5ex}}
+\newcommand*{\ldh}{\hspace{2pt}\rule[.5ex]{2.5ex}{0.5pt}\hspace{-5pt}}
+\newcommand*{\rdh}{\hspace{-5pt}\rule[.5ex]{2.5ex}{0.5pt}\hspace{2pt}}
+
+
+%## Z/pZ, fractions
+\newcommand*{\zmod}[1]{\hspace{-.05em}\leavevmode\kern0.1em\raise.20ex%
+	\hbox{\bfseries \small Z}\kern-.1em/\kern-.15em\lower.25ex%
+	\hbox{\small $#1$\bfseries\small Z}\hspace{.1ex}}
+\newcommand*{\ifrac}[2]{\hspace{-.10em}\leavevmode\kern0.1em\raise.50ex%
+	\hbox{\small $#1$}\kern-.18em/\kern-.12em\lower.40ex%
+	\hbox{\small $#2$}\hspace{.15ex}}
+
+
+%## Equation numbering
+%\makeatletter
+%\@addtoreset{equation}{section} 
+%\makeatother
+%\numberwithin{equation}{section}
+
+%\swapnumbers
+%\renewcommand{\labelenumi}{{\normalfont (\alph{enumi})}} 
+
+%## Upside down hint
+\newcommand*{\dica}[1]{\\ \noindent 
+	\begin{tikzpicture}
+		\node[rotate=180,inner sep=0pt]{\parbox{\linewidth}{\small \tit{Dica:} 
+		#1
+
+		\vspace{8pt}
+	}};
+	\end{tikzpicture}
+}
+\newcommand*{\resp}[1]{\\ \noindent 
+	\begin{tikzpicture}
+		\node[rotate=180,inner sep=0pt]{\parbox{\linewidth}{\small \tit{Resposta:} 
+		#1
+
+		\vspace{8pt}
+	}};
+	\end{tikzpicture}
+}
+
+\newcommand*{\hint}[1]{\\ \noindent 
+	\begin{tikzpicture}
+		\node[rotate=180,inner sep=0pt]{\parbox{\linewidth}{\small \tit{Hint:} 
+		#1
+
+		\vspace{8pt}
+	}};
+	\end{tikzpicture}
+}
+
+
+%## Custom proof styles
+\newenvironment{cproof}{\begin{proof}[Proof:]}{\end{proof}}
+\newenvironment{cnproof}[1]{\begin{proof}[Proof of #1.]}{\end{proof}}
+\newenvironment{sketch}{\begin{proof}[Outline of proof.]}{\end{proof}}
+
+
+%## List with automatic alphabetic enumeration
+\newcounter{alphenumeratecounter}
+\newenvironment{alphenumerate}{
+	\begin{list}{\upshape(\alph{alphenumeratecounter})}
+	{
+		\usecounter{alphenumeratecounter}
+%		\setlength\itemindent{0pt}
+		\setlength\labelwidth{30pt}
+%		\setlength\labelsep{5pt}
+		\setlength\leftmargin{18pt}
+%		\setlength\rightmargin{0pt}
+%		\setlength\listparindent{0pt}
+%		\setlength\topsep{0pt}
+		\setlength\itemsep{1pt minus 1pt}
+	}
+}
+{\end{list} \setcounter{alphenumeratecounter}{1}
+}
+
+%## Theorem-like proclamations
+\newcommand{\ubfp}[2]{\noindent{\bfseries #1~}#2\smallskip}
+\newcommand{\uitp}[1]{\noindent{\itshape #1~}}
+\newcommand{\bfp}[1]{\noindent{%
+	\bfseries(\thesection.\arabic{thm})\:#1.~\addtocounter{thm}{1}}}
+\newcommand{\itp}[1]{\noindent{%
+	\itshape(\thesection.\arabic{thm})\:#1.~\addtocounter{thm}{1}}}
+
+%## Theorems
+\newcounter{cthm}
+
+\newtheoremstyle{cmain}% Style name
+	{}% Space above
+	{}% Space below
+	{\itshape}% Body font
+	{}% Indent amount (empty=no indent)
+	{\bfseries}% Thm head font
+	{.}% Punctuation after thm head
+	{ }% Space after thm head; empty=normal interword space;
+	{\thmnumber{#2}\;\addtocounter{cthm}{1}\thmname{#1} 
+		\Alph{cthm}\thmnote{ \mdseries(#3)}}% Thm design
+
+\newtheoremstyle{pmain} 
+	{} {} {\itshape} {} {\bfseries} {.} { }
+	{(\thmnumber{#2})\:\addtocounter{cthm}{1}\thmname{#1} 
+		\Alph{cthm}\thmnote{ \rmfamily(#3)}}
+
+\newtheoremstyle{pplain}
+	{} {} {\itshape} {} {\bfseries} {.} { }
+	{(\thmnumber{#2})\:\thmname{#1}\thmnote{ \mdseries(#3)}}
+
+\newtheoremstyle{cplain}
+	{} {} {\itshape} {} {\bfseries} {.} { }
+	{\thmnumber{#2}\;\thmname{#1}\thmnote{ \mdseries(#3)}}
+
+\newtheoremstyle{uplain}% Name
+	{} {} {\itshape} {} {\bfseries} {.} { }
+	{\thmname{#1}\thmnote{(#3)}}
+	
+\newtheoremstyle{cdefinition}
+	{} {} {} {} {\bfseries} {.} { }
+	{\thmnumber{#2}\;\thmname{#1}\thmnote{ \mdseries(#3)}}
+
+\newtheoremstyle{pdefinition}
+	{} {} {} {} {\bfseries} {.} { }
+	{(\thmnumber{#2})\:\thmname{#1}\thmnote{ \mdseries(#3)}}
+
+\newtheoremstyle{premark}
+	{} {} {} {} {} {.} { }
+	{{\itshape(\thmnumber{#2})}\:{\itshape \thmname{#1}}\thmnote{ \mdseries(#3)}}
+
+\newtheoremstyle{cremark}
+	{} {} {} {} {} {.} { }
+	{{\itshape\thmnumber{#2}}\;{\itshape \thmname{#1}}\thmnote{ \mdseries(#3)}}
+
+\newtheoremstyle{uremark}
+	{} {} {} {} {} {.} { }
+	{{\itshape \thmname{#1}}\thmnote{ \mdseries(#3)}}
+
+
+
+%## Theorem option pthms: (1.2) Theorem. 
+\DeclareOption{pthms}{
+	\theoremstyle{pplain}
+	\newtheorem{thm}{Theorem}[section]
+		\newtheorem{prp}[thm]{Proposition}
+		\newtheorem{crl}[thm]{Corollary}
+		\newtheorem{lem}[thm]{Lemma}
+	{
+		\theoremstyle{pmain}
+			\newtheorem{mthm}[thm]{Theorem}
+	}
+	{
+		\theoremstyle{plain}
+			\newtheorem*{uprp}{Proposition}
+			\newtheorem*{uthm}{Theorem}
+			\newtheorem*{ucrl}{Corollary}
+			\newtheorem*{ulem}{Lemma}
+	}
+	{
+		\theoremstyle{definition}
+			\newtheorem*{udfn}{Definition}
+			\newtheorem*{untn}{Notation}
+	}
+	{
+		\theoremstyle{premark}
+			\newtheorem{exm}[thm]{Example}
+			\newtheorem{exms}[thm]{Examples}
+			\newtheorem{cvn}[thm]{Convention}
+			\newtheorem{rmk}[thm]{Remark}
+			\newtheorem{rmks}[thm]{Remarks}
+			\newtheorem{ntn}[thm]{Notation}
+	}
+	{
+		\theoremstyle{uremark}
+			\newtheorem*{urmk}{Remark}
+			\newtheorem*{urmks}{Remarks}
+			\newtheorem*{uexm}{Example}
+			\newtheorem*{uexms}{Examples}
+			\newtheorem*{ucvn}{Convention}
+			\newtheorem*{uexr}{Exercise}
+			\newtheorem*{uexre}{Exercise$^\ast$}
+            \newtheorem*{sol}{Solution}
+	}
+	{
+		\theoremstyle{pdefinition}
+			\newtheorem{dfn}[thm]{Definition}
+			\newtheorem{dfns}[thm]{Definitions}
+			\newtheorem{cns}[thm]{Construction}
+			\newtheorem{exr}[thm]{Exercise}
+			\newtheorem{exre}[thm]{Exercise$^\ast$}
+			\newtheorem{qtn}{Question}
+			\newtheorem{prb}{Problem}
+			\newtheorem{cnj}{Conjecture}
+	}
+
+
+	\renewcommand{\thethm}{\thesection.\arabic{thm}}
+
+	\newcommand{\lref}[1]{(\ref{#1})}
+	\newcommand{\pref}[1]{(\ref{#1})}
+	\newcommand{\tref}[1]{(\ref{#1})}
+	\newcommand{\dref}[1]{(\ref{#1})}
+	\newcommand{\rref}[1]{(\ref{#1})}
+	\newcommand{\cref}[1]{(\ref{#1})}
+	\newcommand{\eref}[1]{(\ref{#1})}
+	\newcommand{\xref}[1]{(\ref{#1})}
+	\newcommand{\nref}[1]{(\ref{#1})}
+	\newcommand{\fref}[1]{Figure \ref{#1}}
+	\newcommand{\sref}[1]{\S \ref{#1}}
+}
+
+
+%## Theorem option cthms: 1.2 Theorem.
+
+\DeclareOption{cthms}{
+	\theoremstyle{cplain}
+	\newtheorem{thm}{Theorem}[section]
+		\newtheorem{prp}[thm]{Proposition}
+		\newtheorem{crl}[thm]{Corollary}
+		\newtheorem{lem}[thm]{Lemma}
+	{
+		\theoremstyle{cmain}
+			\newtheorem{mthm}[thm]{Theorem}
+	}
+	{
+		\theoremstyle{plain}
+			\newtheorem*{uprp}{Proposition}
+			\newtheorem*{uthm}{Theorem}
+			\newtheorem*{ucrl}{Corollary}
+			\newtheorem*{ulem}{Lemma}
+	}
+	{
+		\theoremstyle{definition}
+			\newtheorem*{udfn}{Definition}
+			\newtheorem*{untn}{Notation}
+	}
+	{
+		\theoremstyle{cremark}
+			\newtheorem{rmk}[thm]{Remark}
+			\newtheorem{rmks}[thm]{Remarks}
+			\newtheorem{exm}[thm]{Example}
+			\newtheorem{exms}[thm]{Examples}
+			\newtheorem{cvn}[thm]{Convention}
+	}
+	{
+		\theoremstyle{uremark}
+			\newtheorem*{urmk}{Remark}
+			\newtheorem*{urmks}{Remarks}
+			\newtheorem*{uexm}{Example}
+			\newtheorem*{uexms}{Examples}
+			\newtheorem*{ucvn}{Convention}
+			\newtheorem*{uexr}{Exercise}
+			\newtheorem*{uexre}{Exercise$^\ast$}
+            \newtheorem*{sol}{Solution}
+	}
+	{
+		\theoremstyle{cdefinition}
+			\newtheorem{dfn}[thm]{Definition}
+			\newtheorem{dfns}[thm]{Definitions}
+			\newtheorem{ntn}[thm]{Notation}
+			\newtheorem{cns}[thm]{Construction}
+			\newtheorem{exr}[thm]{Exercise}
+			\newtheorem{exre}[thm]{Exercise$^\ast$}
+			\newtheorem{qtn}[thm]{Question}
+			\newtheorem{cnj}[thm]{Conjecture}
+			\newtheorem{prb}[thm]{Problem}
+	}
+	\renewcommand{\thethm}{\thesection.\arabic{thm}}
+	\newcommand{\lref}[1]{(\ref{#1})}
+	\newcommand{\pref}[1]{(\ref{#1})}
+	\newcommand{\tref}[1]{(\ref{#1})}
+	\newcommand{\dref}[1]{(\ref{#1})}
+	\newcommand{\rref}[1]{(\ref{#1})}
+	\newcommand{\cref}[1]{(\ref{#1})}
+	\newcommand{\eref}[1]{(\ref{#1})}
+	\newcommand{\xref}[1]{(\ref{#1})}
+	\newcommand{\nref}[1]{(\ref{#1})}
+	\newcommand{\fref}[1]{Figure \ref{#1}}
+	\newcommand{\sref}[1]{\S \ref{#1}}
+}
+
+
+%## Theorem option sthms: Theorem 1.2. 
+\DeclareOption{sthms}{
+	\theoremstyle{plain}
+	\newtheorem{thm}{Theorem}[section]
+		\newtheorem{prp}[thm]{Proposition}
+		\newtheorem{crl}[thm]{Corollary}
+		\newtheorem{lem}[thm]{Lemma}
+	\newtheorem*{uprp}{Proposition}
+	\newtheorem*{uthm}{Theorem}
+	\newtheorem*{ucor}{Corollary}
+	\newtheorem*{ulem}{Lemma}
+	{
+%		\theoremstyle{cmain}
+%			\newtheorem{mthm}[thm]{Theorem}
+	}
+	{
+		\theoremstyle{definition}
+			\newtheorem*{udfn}{Definition}
+			\newtheorem*{untn}{Notation}
+	}
+	{
+		\theoremstyle{remark}
+			\newtheorem{rmk}[thm]{Remark}
+			\newtheorem{rmks}[thm]{Remarks}
+			\newtheorem{exm}[thm]{Example}
+			\newtheorem{exms}[thm]{Examples}
+			\newtheorem{exr}[thm]{Exercise}
+			\newtheorem{exre}[thm]{Exercise$^\ast$}
+			\newtheorem{cvn}[thm]{Convention}
+			\newtheorem*{urmk}{Remark}
+			\newtheorem*{urmks}{Remarks}
+			\newtheorem*{uexm}{Example}
+			\newtheorem*{uexms}{Examples}
+			\newtheorem*{uexr}{Exercise}
+			\newtheorem*{uexre}{Exercise$^\ast$}
+			\newtheorem*{ucvn}{Convention}
+	}
+
+	{
+		\theoremstyle{definition}
+			\newtheorem{dfn}[thm]{Definition}
+			\newtheorem{dfns}[thm]{Definitions}
+			\newtheorem{ntn}[thm]{Notation}
+			\newtheorem{cns}[thm]{Construction}
+			\newtheorem{qtn}{Question}
+			\newtheorem{cnj}{Conjecture}
+	}
+	\renewcommand{\thethm}{\thesection.\arabic{thm}}
+	\newcommand{\sref}[1]{\S \ref{#1}}
+	\newcommand{\fref}[1]{Figure \ref{#1}}
+	\newcommand{\lref}[1]{Lemma \ref{#1}}
+	\newcommand{\pref}[1]{Proposition \ref{#1}}
+	\newcommand{\tref}[1]{Theorem \ref{#1}}
+	\newcommand{\dref}[1]{Definition \ref{#1}}
+	\newcommand{\rref}[1]{Remark \ref{#1}}
+	\newcommand{\cref}[1]{Corollary \ref{#1}}
+	\newcommand{\eref}[1]{Example \ref{#1}}
+	\newcommand{\xref}[1]{Exercise \ref{#1}}
+	\newcommand{\nref}[1]{Notation \ref{#1}}
+
+}
+
+%## Theorem option ptthms: 1.2 Teorema 
+
+\DeclareOption{ptthms}{
+	\renewenvironment{sketch}{\begin{proof}[Esbo\c co da prova.]}{\end{proof}}
+	\theoremstyle{pplain}
+	\newtheorem{thm}{Teorema}[section]
+		\newtheorem{prp}[thm]{Proposi\c c\~ao}
+		\newtheorem{crl}[thm]{Corol\'ario}
+		\newtheorem{lem}[thm]{Lema}
+	{
+		\theoremstyle{pmain}
+			\newtheorem{mthm}[thm]{Teorema}
+	}
+	{
+		\theoremstyle{plain}
+			\newtheorem*{uprp}{Proposi\c c\~ao}
+			\newtheorem*{uthm}{Teorema}
+			\newtheorem*{ucrl}{Corol\'ario}
+			\newtheorem*{ulem}{Lema}
+	}
+	{
+		\theoremstyle{definition}
+			\newtheorem*{udfn}{Defini\c c\~ao}
+	}
+	{
+		\theoremstyle{premark}
+			\newtheorem{exm}[thm]{Exemplo}
+			\newtheorem{exms}[thm]{Exemplos}
+			\newtheorem{cvn}[thm]{Conven\c c\~ao}
+			\newtheorem{rmk}[thm]{Observa\c c\~ao}
+			\newtheorem{rmks}[thm]{Observa\c c\~oes}
+			\newtheorem{ntn}[thm]{Nota\c c\~ao}
+	}
+	{
+		\theoremstyle{uremark}
+            \newtheorem*{uaxm}{Axioma}
+			\newtheorem*{uexm}{Exemplo}
+			\newtheorem*{uexms}{Exemplos}
+			\newtheorem*{urmk}{Observa\c c\~ao}
+			\newtheorem*{urmks}{Observa\c c\~oes}
+			\newtheorem*{ucvn}{Conven\c c\~oes}
+			\newtheorem*{uexr}{Exerc\'icio}
+			\newtheorem*{uexre}{Exerc\'icio$^\ast$}
+            \newtheorem*{sol}{Solu\c c\~ao}
+			\newtheorem*{untn}{Nota\c c\~ao}
+	}
+	{
+		\theoremstyle{pdefinition}
+            \newtheorem{axm}[thm]{Axioma}
+			\newtheorem{dfn}[thm]{Defini\c c\~ao}
+			\newtheorem{dfns}[thm]{Defini\c c\~oes}
+			\newtheorem{cns}[thm]{Constru\c c\~ao}
+			\newtheorem{exr}[thm]{Exerc\'icio}
+			\newtheorem{exre}[thm]{Exerc\'icio$^\ast$}
+			\newtheorem{qtn}{Quest\~ao}
+			\newtheorem{prb}{Problema}
+	}
+	\renewcommand{\thethm}{\thesection.\arabic{thm}}
+	\newcommand{\lref}[1]{(\ref{#1})}
+	\newcommand{\pref}[1]{(\ref{#1})}
+	\newcommand{\tref}[1]{(\ref{#1})}
+	\newcommand{\dref}[1]{(\ref{#1})}
+	\newcommand{\rref}[1]{(\ref{#1})}
+	\newcommand{\cref}[1]{(\ref{#1})}
+	\newcommand{\eref}[1]{(\ref{#1})}
+	\newcommand{\xref}[1]{(\ref{#1})}
+	\newcommand{\nref}[1]{(\ref{#1})}
+	\newcommand{\fref}[1]{Figura \ref{#1}}
+	\newcommand{\sref}[1]{\S \ref{#1}}
+}
+%## Default theorem option thms: Theorem 1. 
+\DeclareOption{thms}{
+	\theoremstyle{plain}
+	\newtheorem{thm}{Theorem}[]
+		\newtheorem{prp}[thm]{Proposition}
+		\newtheorem{crl}[thm]{Corollary}
+		\newtheorem{lem}[thm]{Lemma}
+	\newtheorem*{uprp}{Proposition}
+	\newtheorem*{uthm}{Theorem}
+	{
+%		\theoremstyle{cmain}
+%			\newtheorem{mthm}[thm]{Theorem}
+	}
+	{
+		\theoremstyle{definition}
+			\newtheorem*{udfn}{Definition}
+			\newtheorem*{untn}{Notation}
+	}
+	{
+		\theoremstyle{remark}
+			\newtheorem{exm}[thm]{Example}
+			\newtheorem{exms}[thm]{Examples}
+			\newtheorem{exr}[thm]{Exercise}
+			\newtheorem{exre}[thm]{Exercise$^\ast$}
+			\newtheorem{cvn}[thm]{Convention}
+			\newtheorem*{urmk}{Remark}
+			\newtheorem*{urmks}{Remarks}
+			\newtheorem*{uexm}{Example}
+			\newtheorem*{uexms}{Examples}
+			\newtheorem*{uexr}{Exercise}
+			\newtheorem*{uexre}{Exercise$^\ast$}
+			\newtheorem*{ucvn}{Convention}
+	}
+
+	{
+		\theoremstyle{definition}
+			\newtheorem{dfn}[thm]{Definition}
+			\newtheorem{dfns}[thm]{Definitions}
+			\newtheorem{rmk}[thm]{Remark}
+			\newtheorem{rmks}[thm]{Remarks}
+			\newtheorem{ntn}[thm]{Notation}
+			\newtheorem{cns}[thm]{Construction}
+			\newtheorem{qtn}{Question}
+			\newtheorem{prb}{Problem}
+			\newtheorem{cnj}{Conjecture}
+	}
+}
+
+
+%## Some default dimensions
+
+\DeclareOption{tight}{
+	\setlength{\oddsidemargin}{12.6mm}\setlength{\evensidemargin}{9.8mm} 
+	\setlength{\textwidth}{134mm}
+}
+
+\DeclareOption{wide}{
+	\geometry{totalwidth=6in, totalheight=9.25in, footskip=22pt, centering}
+	\renewcommand{\baselinestretch}{1.02}
+}
+
+\DeclareOption{wider}{
+	\geometry{totalwidth=17cm, totalheight=25cm, footskip=22pt, centering}
+	\renewcommand{\baselinestretch}{1.02}
+
+}
+
+\DeclareOption{widertaller}{
+	\geometry{totalwidth=17cm, totalheight=28cm, footskip=22pt, centering}
+	\renewcommand{\baselinestretch}{1.02}
+
+}
+\newif\if@loadtikz%\@loadtikzfalse
+\DeclareOption{tikz}{\@loadtikztrue}
+
+\ProcessOptions\relax
+
+\if@loadtikz
+  \RequirePackage{tikz,tikz-cd}
+\fi
+
+\endinput
