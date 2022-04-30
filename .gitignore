@@ -1,0 +1,8 @@
+.gitignore
+gewoehn.sty
+errata.aux
+errata.log
+errata.md
+errata.pdf
+errata.synctex.gz
+errata.tex
