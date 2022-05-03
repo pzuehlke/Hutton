@@ -1,9 +1,6 @@
 ------------------------------------
 --  The Countdown Problem Solver  --
 ------------------------------------
-
-
-
 data Op = Add | Sub | Mul | Div
 
 instance Show Op where

@@ -1,5 +1,5 @@
 ------------------------------------------------------
---  Exercise 7.7 - Programming in Haskell - Hutton  --
+--  Exercise 7.8 - Programming in Haskell - Hutton  --
 ------------------------------------------------------
 import Data.Char
 
@@ -45,13 +45,13 @@ encode = map (addParityBit . makeByte . intToBit . ord)
 decode :: [[Bit]] -> String
 decode = map (chr . bitToInt . checkParity)
 
--- | Simulates a perfect communication channel to send/receive lists of bits.
-channel :: [[Bit]] -> [[Bit]]
-channel = id
+-- | Simulates a faulty communication channel to send/receive lists of bits.
+faultyChannel :: [[Bit]] -> [[Bit]]
+faultyChannel = map tail
 
 -- | Simulates the transmission of a string of characters as a list of bits.
 transmit :: String -> String
-transmit = decode . channel . encode
+transmit = decode . faultyChannel . encode
 
 -- Sample test: 
 -- transmit "Test successful!"

@@ -15,3 +15,7 @@ luhnDouble n    | n >= 5        = 2 * n - 9
 
 luhn :: [Int] -> Bool
 luhn ns = ((sum (altMap id luhnDouble (reverse ns)) `mod` 10) == 0)
+
+-- Sample tests:
+-- luhn [1, 7, 8, 4] == True
+-- luhn [4, 7, 8, 3] == False

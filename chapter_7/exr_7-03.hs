@@ -9,5 +9,4 @@ myFilter :: (a -> Bool) -> [a] -> [a]
 myFilter p = foldr f []
              where
                f x xs    | p x       = x : xs
-                            | otherwise = xs
-    
+                         | otherwise = xs

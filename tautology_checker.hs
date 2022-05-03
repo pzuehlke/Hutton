@@ -24,19 +24,19 @@ p1 :: Prop
 p1 = And (Var 'A') (Not (Var 'A'))
 
 p2 :: Prop
--- (A and B) -> A
+-- (A and B) --> A
 p2 = Implies (And (Var 'A') (Var 'B')) (Var 'A')
 
 p3 :: Prop
--- A -> (A and B)
+-- A --> (A and B)
 p3 = Implies (Var 'A') (And (Var 'A') (Var 'B'))
 
 p4 :: Prop
--- (A and (A -> B)) -> B
+-- (A and (A --> B)) --> B
 p4 = Implies (And (Var 'A') (Implies (Var 'A') (Var 'B'))) (Var 'B')
 
 p5 :: Prop
--- A <-> B implies (~A) <-> (~B)
+-- (A <--> B --> [(~A) <--> (~B)]
 p5 = Implies (Equiv (Var 'A') (Var 'B')) (Equiv (Not (Var 'A')) (Not (Var 'B')))
 
 
