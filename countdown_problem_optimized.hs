@@ -1,6 +1,6 @@
-----------------------------------------------------------
---  The Countdown Problem Solver - Brute Force Approach --
-----------------------------------------------------------
+-------------------------------------------------------------
+--  The Countdown Problem Solver - More Efficient Solution --
+-------------------------------------------------------------
 data Op = Add | Sub | Mul | Div
 
 instance Show Op where
@@ -18,6 +18,10 @@ instance Show Expr where
                         bracket (Val n)    = show n
                         bracket e          = "(" ++ show e ++ ")"
 
+-- | Elements of this type consist of an expression paired with its value
+-- (as long as the expression evaluates successfully).
+type Result = (Expr, Int)
+
 -- List containing all members of Op:
 ops :: [Op]
 ops = [Add, Sub, Mul, Div]
@@ -25,10 +29,10 @@ ops = [Add, Sub, Mul, Div]
 -- | Checks if the application of an elementary operation to two integers is
 -- valid according to the rules of the game.
 valid :: Op -> Int -> Int -> Bool
-valid Add _ _   = True 
-valid Sub m n   = m > n 
-valid Mul _ _   = True
-valid Div m n   = m `mod` n == 0
+valid Add m n   = m <= n
+valid Sub m n   = m > n
+valid Mul m n   = m /= 1 && n /= 1 && m <= n
+valid Div m n   = n /= 1 && m `mod` n == 0
 
 -- | Applies an elementary operation to two integers.
 apply :: Op -> Int -> Int -> Int
@@ -36,7 +40,6 @@ apply Add m n   = m + n
 apply Sub m n   = m - n
 apply Mul m n   = m * n
 apply Div m n   = m `div` n
-
 -- Some sample expressions:
 -- (1 + 50) * (25 - 10)
 e :: Expr
@@ -111,28 +114,27 @@ split []        = []
 split [_]       = []
 split (x:xs)    = ([x], xs) : [(x:ls, rs) | (ls, rs) <- split xs]
 
--- | Returns a list containing all possible combinations of two given
--- expressions by one of the four elementary operations.
-combine :: Expr -> Expr -> [Expr]
-combine l r = [App o l r | o <- ops]
+-- | Returns a list containing all (at most four) possible valid results of
+-- combining two given expressions by one of the elementary operations.
+combine' :: Result -> Result -> [Result]
+combine' (l, m) (r, n) = [(App o l r, apply o m n) | o <- ops, valid o m n]
 
--- | Given a list of integers, returns a list of all possible expressions
--- obtained by combining them in the given order, but using any possible
--- association and any of the elementary operations at each step.
-exprs :: [Int] -> [Expr]
-exprs []    = []
-exprs [n]   = [Val n]
-exprs ns    = [e | (ls, rs) <- split ns,
-               l <- exprs ls,
-               r <- exprs rs,
-               e <- combine l r] 
+-- | Given a list of integers, returns the list of all possible results (pairs
+-- of valid expressions and their values) that can be formed from them.
+results :: [Int] -> [Result]
+results []  = []
+results [n] = [(Val n, n) | n > 0]
+results ns  = [res | (ls, rs)   <- split ns,
+                     lx         <- results ls,
+                     ry         <- results rs,
+                     res        <- combine' lx ry]
 
 -- | Given a list of integers and a target, returns the list of all solutions
 -- (if any) to the countdown problem for these inputs.
-solutions :: [Int] -> Int -> [Expr]
-solutions ns n = [e | ms <- choices ns, e <- exprs ms, eval e == [n]]
+solutions' :: [Int] -> Int -> [Expr]
+solutions' ns n = [e | ms <- choices ns, (e, m) <- results ms, m == n]
 
 -- | Prints the number of solutions to the countdown problem given a list of
 -- integers and a target.
 main :: IO ()
-main = print(length(solutions [1, 3, 7, 10, 25, 50] 765))
+main = print(length(solutions' [1, 3, 7, 10, 25, 50] 765))
