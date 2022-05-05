@@ -1,6 +1,6 @@
-------------------------------------
---  The Countdown Problem Solver  --
-------------------------------------
+----------------------------------------------------------
+--  The Countdown Problem Solver - Brute Force Approach --
+----------------------------------------------------------
 data Op = Add | Sub | Mul | Div
 
 instance Show Op where
@@ -9,7 +9,7 @@ instance Show Op where
   show Mul = "*"
   show Div = "/"
 
--- List all members of Op:
+-- List containing all members of Op:
 ops :: [Op]
 ops = [Add, Sub, Mul, Div]
 
@@ -33,13 +33,12 @@ data Expr = Val Int | App Op Expr Expr
 
 instance Show Expr where
   show (Val n)      = show n
-  show (App o l r)  = brak l ++ " " ++ show o ++ " " ++ brak r
+  show (App o l r)  = bracket l ++ " " ++ show o ++ " " ++ bracket r
                       where
-                        brak (Val n)    = show n
-                        brak e          = "(" ++ show e ++ ")"
+                        bracket (Val n)    = show n
+                        bracket e          = "(" ++ show e ++ ")"
 
--- Sample expressions:
-
+-- Some sample expressions:
 -- (1 + 50) * (25 - 10)
 e :: Expr
 e = App Mul (App Add (Val 1) (Val 50)) (App Sub (Val 25) (Val 10))
@@ -104,7 +103,7 @@ choices = concat . map perms . subs
 -- | Decides whether a valid expression is a solution of the problem using a
 -- given list of numbers (or some sublist of it) for a given target.
 isSolution :: Expr -> [Int] -> Int -> Bool
-isSolution e ns n = elem (values e) (choices ns) && eval e == [n]
+isSolution e ns target = elem (values e) (choices ns) && eval e == [target]
 
 -- | Given a list xs, returns all possible pairs (ls, rs) consisting of
 -- sublists which concatenate to xs, in the form of a list of pairs.
@@ -113,6 +112,14 @@ split []        = []
 split [_]       = []
 split (x:xs)    = ([x], xs) : [(x:ls, rs) | (ls, rs) <- split xs]
 
+-- | Returns a list containing all possible combinations of two given
+-- expressions by one of the four elementary operations.
+combine :: Expr -> Expr -> [Expr]
+combine l r = [App o l r | o <- ops]
+
+-- | Given a list of integers, returns a list of all possible expressions
+-- obtained by combining them in the given order, but using any possible
+-- association and any of the elementary operations at each step.
 exprs :: [Int] -> [Expr]
 exprs []    = []
 exprs [n]   = [Val n]
@@ -121,11 +128,12 @@ exprs ns    = [e | (ls, rs) <- split ns,
                r <- exprs rs,
                e <- combine l r] 
 
-combine :: Expr -> Expr -> [Expr]
-combine l r = [App o l r | o <- ops]
-
+-- | Given a list of integers and a target, returns the list of all solutions
+-- (if any) to the countdown problem for these inputs.
 solutions :: [Int] -> Int -> [Expr]
 solutions ns n = [e | ms <- choices ns, e <- exprs ms, eval e == [n]]
 
+-- | Prints the number of solutions to the countdown problem given a list of
+-- integers and a target.
 main :: IO ()
 main = print(length(solutions [1, 3, 7, 10, 25, 50] 765))
