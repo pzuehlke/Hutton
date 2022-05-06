@@ -1,0 +1,24 @@
+------------------------------------------------------
+--  Exercise 15.1 - Programming in Haskell - Hutton  --
+------------------------------------------------------
+
+-- Answer: 
+-- (a) 1 + (2 * 3)
+-- The reducible expressions are:
+--      # The entire expression, which is outermost;
+--      # '2 * 3', which is innermost.
+--
+-- (b) (1 + 2) * (2 + 3)
+-- The reducible expressions are:
+--      # The entire expression, which is outermost;
+--      # '1 + 2' and '2 + 3', which are innermost.
+--
+-- (c) fst (1 + 2, 2 + 3)
+-- The reducible expressions are:
+--      # The entire exprsesion, which is outermost;
+--      # '1 + 2' and '2 + 3', which are innermost.
+--
+-- (d) (\x -> 1 + x) (2 * 3)
+-- The reducible expressions are:
+--      # The entire expression, which is outermost;
+--      # '2 * 3', which is innermost.
