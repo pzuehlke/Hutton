@@ -1,3 +1,9 @@
+----------------------------------------------------
+--  Chapter 15 - Programming in Haskell - Hutton  --
+----------------------------------------------------
+
+import Data.Foldable
+
 inc :: Int -> Int
 inc n = n + 1
 
@@ -22,3 +28,10 @@ primes = sieve [2..]
 
 sieve :: [Int] -> [Int]
 sieve (p:xs) = p : sieve [n | n <- xs, n `mod` p /= 0]
+
+sumwith :: Int -> [Int] -> Int
+sumwith v []        = v
+sumwith v (x:xs)    = sumwith (v + x) xs
+
+sumwith' :: Int -> [Int] -> Int
+sumwith' = foldl' (+)
