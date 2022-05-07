@@ -1,6 +1,6 @@
-------------------------------------------------------
+-------------------------------------------------------
 --  Exercise 15.6 - Programming in Haskell - Hutton  --
-------------------------------------------------------
+-------------------------------------------------------
 
 -- Given x, returns a function which computes the next approximation given the
 -- current approximation to the square root of x.
