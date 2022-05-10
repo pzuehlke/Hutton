@@ -15,7 +15,7 @@ myDrop n (_:xs) = myDrop (n - 1) xs
 -- Theorem: take n xs ++ drop n xs == xs.
 --
 -- Proof: By induction on n.
--- Base cases:
+-- Base case:
 -- take 0 xs ++ drop 0 xs   = {applying take, drop} [] ++ xs
 --                          = {applying ++} xs
 --
