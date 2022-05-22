@@ -115,7 +115,7 @@ split [_]       = []
 split (x:xs)    = ([x], xs) : [(x:ls, rs) | (ls, rs) <- split xs]
 
 -- | Returns a list containing all (at most four) possible valid results of
--- combining two given expressions by one of the elementary operations.
+-- combining two given expressions using one of the elementary operations.
 combine' :: Result -> Result -> [Result]
 combine' (l, m) (r, n) = [(App o l r, apply o m n) | o <- ops, valid o m n]
 

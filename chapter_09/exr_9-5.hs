@@ -1,6 +1,13 @@
-----------------------------------------------------------
---  The Countdown Problem Solver - Brute Force Approach --
-----------------------------------------------------------
+------------------------------------------------------
+--  Exercise 9.5 - Programming in Haskell - Hutton  --
+------------------------------------------------------
+
+-- Run this script using 'ghc -O2' to verify the claim in the statement
+-- (cf. the last few lines). Note that by "expressions over the numbers 1, 3,
+-- 7, 10, 25, 50", the author means all possible expressions formed from some
+-- _choice_ of some of these numbers. The only necessary modification to the
+-- original script is to permit all subtractions and all divisions as long as
+-- the denominator is nonzero; see the definition of the function 'valid'.
 
 data Op = Add | Sub | Mul | Div
 
@@ -27,10 +34,11 @@ ops = [Add, Sub, Mul, Div]
 -- | Checks if the application of an elementary operation to two integers is
 -- valid according to the rules of the game.
 valid :: Op -> Int -> Int -> Bool
-valid Add _ _   = True 
-valid Sub m n   = m > n 
-valid Mul _ _   = True
-valid Div m n   = m `mod` n == 0
+valid Add _ _               = True 
+valid Sub m n               = True
+valid Mul _ _               = True
+valid Div m n   | n == 0    = False
+                | otherwise = m `mod` n == 0
 
 -- | Applies an elementary operation to two integers.
 apply :: Op -> Int -> Int -> Int
@@ -38,31 +46,6 @@ apply Add m n   = m + n
 apply Sub m n   = m - n
 apply Mul m n   = m * n
 apply Div m n   = m `div` n
-
--- Some sample expressions:
--- (1 + 50) * (25 - 10)
-e :: Expr
-e = App Mul (App Add (Val 1) (Val 50)) (App Sub (Val 25) (Val 10))
-
--- 1 + (2 * 3)
-e1 :: Expr
-e1 = App Add (Val 1) (App Mul (Val 2) (Val 3))
-
--- (4 / 2) - 1
-e2 :: Expr
-e2 = App Sub (App Div (Val 4) (Val 2)) (Val 1)
-
--- 2 - 3
-e3 :: Expr
-e3 = App Sub (Val 2) (Val 3)
-
--- (2 / 3) * 3
-e4 :: Expr
-e4 = App Mul (App Div (Val 2) (Val 3)) (Val 3)
-
--- (2 * 3) / 3
-e5 :: Expr
-e5 = App Div (App Mul (Val 2) (Val 3)) (Val 3) 
 
 -- | Returns a list of all the integers appearing in a given expression, prior
 -- to its evaluation (and to the evaluation of any subexpressions).
@@ -81,7 +64,7 @@ eval (App o l r)    = [apply o x y | x <- eval l, y <- eval r, valid o x y]
 -- deleting some of the elements, but preserving the original order.
 subs :: [a] -> [[a]]
 subs []         = [[]]
-subs (x:xs)     = (subs xs) ++ (map (x:) (subs xs))
+subs (x:xs)     = subs xs ++ map (x:) (subs xs)
 
 -- | Given x and and a list xs, returns a list of lists comprising all possible
 -- ways to obtain a new list by inserting x into xs.
@@ -137,4 +120,5 @@ solutions ns n = [e | ms <- choices ns, e <- exprs ms, eval e == [n]]
 -- | Prints the number of solutions to the countdown problem given a list of
 -- integers and a target.
 main :: IO ()
-main = print(length(solutions [1, 3, 7, 10, 25, 50] 765))
+main = print(length([e | ns <- choices [1, 3, 7, 10, 25, 50],
+                         e <- exprs ns, eval e /= [] ]))
