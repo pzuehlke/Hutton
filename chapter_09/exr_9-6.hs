@@ -1,13 +1,19 @@
--------------------------------------------------------------
---  The Countdown Problem Solver - More Efficient Solution --
--------------------------------------------------------------
-data Op = Add | Sub | Mul | Div
+------------------------------------------------------
+--  Exercise 9.6 - Programming in Haskell - Hutton  --
+------------------------------------------------------
+
+import Data.List
+import Data.Function
+
+data Op = Add | Sub | Mul | Div | Exp
+    deriving (Eq, Ord)
 
 instance Show Op where
   show Add = "+"
   show Sub = "-"
   show Mul = "*"
   show Div = "/"
+  show Exp = "^"
 
 -- | Recursive type which models a numeric expression.
 data Expr = Val Int | App Op Expr Expr
@@ -24,7 +30,7 @@ type Result = (Expr, Int)
 
 -- List containing all members of Op:
 ops :: [Op]
-ops = [Add, Sub, Mul, Div]
+ops = [Add, Sub, Mul, Div, Exp]
 
 -- | Checks if the application of an elementary operation to two integers is
 -- valid according to the rules of the game.
@@ -32,7 +38,8 @@ valid :: Op -> Int -> Int -> Bool
 valid Add m n   = m <= n
 valid Sub m n   = m > n
 valid Mul m n   = m /= 1 && n /= 1 && m <= n
-valid Div m n   = n /= 1 && m `mod` n == 0
+valid Div m n   = n /= 1 && n /= 0 && m `mod` n == 0
+valid Exp m n   = m > 0 && n > 1
 
 -- | Applies an elementary operation to two integers.
 apply :: Op -> Int -> Int -> Int
@@ -40,6 +47,7 @@ apply Add m n   = m + n
 apply Sub m n   = m - n
 apply Mul m n   = m * n
 apply Div m n   = m `div` n
+apply Exp m n   = m ^ n
 
 -- Some sample expressions:
 -- (1 + 50) * (25 - 10)
@@ -135,7 +143,31 @@ results ns  = [res | (ls, rs)   <- split ns,
 solutions' :: [Int] -> Int -> [Expr]
 solutions' ns n = [e | ms <- choices ns, (e, m) <- results ms, m == n]
 
+nearestSoltns :: [Int] -> Int -> [Result]
+nearestSoltns ns n = sortedMinimizing
+  where rs = [(e, m) | ms <- choices ns, (e, m) <- results ms]
+        as = [((e, m), abs(m - n)) | (e, m) <- rs]
+        sortedAs = sortBy (myCompare) as
+        minim = (snd . head) sortedAs
+        minimizing = map fst (takeWhile (\tup -> (snd tup == minim)) sortedAs)
+        sortedMinimizing = sortBy (compare `on` (complexity . fst)) minimizing
+
+myCompare :: Ord b => (a, b) -> (a, b) -> Ordering
+myCompare (x, y) (x', y')   | y < y'    = LT
+                            | y == y'   = EQ
+                            | y > y'    = GT
+
+complexity :: Expr -> Int
+complexity (Val _)      = 1
+complexity (App o l r)  = complexity l + complexity r
+
+isEmpty :: [a] -> Bool
+isEmpty []  = True
+isEmpty _   = False
+
 -- | Prints the number of solutions to the countdown problem given a list of
 -- integers and a target.
 main :: IO ()
-main = print(length(solutions' [1, 3, 7, 10, 25, 50] 765))
+main = do print(solutions' [1, 3, 7, 10, 25, 50] 831)
+          print(nearestSoltns [1, 3, 7, 10, 25, 50] 831)
+
