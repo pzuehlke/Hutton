@@ -2,6 +2,24 @@
 --  Exercise 9.6 - Programming in Haskell - Hutton  --
 ------------------------------------------------------
 
+-- This script solves all three parts of the exercises simultaneously.
+--
+-- Part (a) is solved by modifying the Op type and the functions 'valid' and
+-- 'apply' to include exponentiation.
+--
+-- Parts (b) and (c) are solved through the function nearestSolutions toward
+-- the end. The nearest solutions are sorted in terms of 'complexity', which is
+-- a count of the number of values that they contain (if we think of an
+-- expression as a tree, it is the number of leaves).
+--
+-- Perhaps because exponentiation produces very large integers, which are then
+-- not represented correctly by Int, in the definition of 'valid', in the case
+-- of division, it is necessary to discard explicitly the case where the
+-- denominator is 0, even though in reality all such denominators should be > 0
+-- as an automatic consequence of the guard on Sub and the fact that we begin
+-- with a list of positive integers. Without this condition GHC raises an
+-- exception.
+
 import Data.List
 import Data.Function
 
@@ -38,8 +56,8 @@ valid :: Op -> Int -> Int -> Bool
 valid Add m n   = m <= n
 valid Sub m n   = m > n
 valid Mul m n   = m /= 1 && n /= 1 && m <= n
-valid Div m n   = n /= 1 && n /= 0 && m `mod` n == 0
-valid Exp m n   = m > 0 && n > 1
+valid Div m n   = n > 1 && m `mod` n == 0
+valid Exp m n   = n > 1
 
 -- | Applies an elementary operation to two integers.
 apply :: Op -> Int -> Int -> Int
