@@ -57,9 +57,9 @@ myDrop n (_:xs) = myDrop (n - 1) xs
 quickSort :: Ord a => [a] -> [a]
 quickSort []        = []
 quickSort (x:xs)    = quickSort smaller ++ [x] ++ quickSort larger
-                      where  
-                        smaller = [y | y <- xs, y < x]
-                        larger = [y | y <- xs, x >= y]
+    where
+        smaller = [y | y <- xs, y < x]
+        larger =  [y | y <- xs, x <= y]
 
 evens :: [a] -> [a]
 evens []        = []

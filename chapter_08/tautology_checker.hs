@@ -1,1 +1,0 @@
-../tautology_checker.hs

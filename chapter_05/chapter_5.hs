@@ -2,26 +2,26 @@
 --  CHAPTER 5 - PROGRAMMING IN HASKELL - HUTTON  --
 ---------------------------------------------------
 
-concatenate :: [[a]] -> [a]
-concatenate xss = [x | xs <- xss, x <- xs]
+concat :: [[a]] -> [a]
+concat xss = [x | xs <- xss, x <- xs]
 
 firsts :: [(a, b)] -> [a]
-firsts pairs = [x | (x, _) <- pairs]
+firsts ps = [x | (x, _) <- ps]
 
-listLength :: [a] -> Int
-listLength xs = sum [1 | x <- xs]
+length' :: [a] -> Int
+length' xs = sum [1 | _ <- xs]
 
 factors :: Int -> [Int]
-factors n = [d | d <- [1..n], n `mod` d == 0]
+factors n = [k | k <- [1..n], n `mod` k == 0]
 
-isPrime :: Int -> Bool
-isPrime n = (factors n) == [1, n]
+prime :: Int -> Bool
+prime n = factors n == [1, n]
 
-getPrimes :: Int -> [Int]
-getPrimes n = [p | p <- [2..n], isPrime p]
+primes :: Int -> [Int]
+primes n = [p | p <- [2..n], prime p]
 
 find :: Eq a => a -> [(a, b)] -> [b]
-find k tuples = [value | (key, value) <- tuples, key == k]
+find k t = [v | (k', v) <- t, k' == k]
 
 myZip :: [a] -> [b] -> [(a, b)]
 myZip [] _          = []
@@ -31,14 +31,14 @@ myZip (x:xs) (y:ys) = (x, y) : myZip xs ys
 pairs :: [a] -> [(a, a)]
 pairs xs = zip xs (tail xs)
 
-isSorted :: Ord a => [a] -> Bool
-isSorted xs = and [x <= y | (x, y) <- pairs xs]
+sorted :: Ord a => [a] -> Bool
+sorted xs = and [x <= y | (x, y) <- pairs xs]
 
 positions :: Eq a => a -> [a] -> [Int]
-positions x xs = [i | (y, i) <- myZip xs [0..], y == x]
+positions x xs = [i | (y, i) <- zip xs [0..], y == x]
 
 lowers :: String -> Int
-lowers xs = length [x | x <- xs, 'a' <= x && x <= 'z']
+lowers cs = length [c | c <- cs, 'a' <= c && c <= 'z']
 
 count :: Char -> String -> Int
-count c string = length [char | char <- string, char == c]
+count c cs = length [c' | c' <- cs, c' == c]

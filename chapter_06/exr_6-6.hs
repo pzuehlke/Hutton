@@ -10,8 +10,7 @@ myAnd (x:xs) = x && myAnd xs
 -- (b)
 myConcat :: [[a]] -> [a]
 myConcat []         = []
-myConcat [xs]       = xs
-myConcat (xs : ys)  = xs ++ myConcat ys
+myConcat (xs:xss)   = xs ++ myConcat xss
 
 -- (c)
 myReplicate :: Int -> a -> [a]
@@ -26,4 +25,4 @@ myGet (x:xs) n  = myGet xs (n - 1)
 -- (e)
 myElem :: Eq a => a -> [a] -> Bool
 myElem _ []     = False
-myElem y (x:xs) = (y == x || myElem y xs)
+myElem y (x:xs) = y == x || myElem y xs

@@ -8,9 +8,7 @@ import Data.Char
 
 -- | Count the number of occurrences of an item in a list.
 count :: Eq a => a -> [a] -> Int
-count _ []                  = 0
-count x (y:ys)  | x == y    = 1 + count x ys
-                | otherwise = count x ys
+count x xs = length [x' | x' <- xs, x' == x]
 
 -- | Convert a lowercase letter to an integer between 0 and 25.
 lowerToInt :: Char -> Int
@@ -30,11 +28,11 @@ intToUpper n = chr (ord 'A' + n)
 
 -- | Check if a character is a lowercase letter.
 lower :: Char -> Bool
-lower c = (ord 'a' <= ord c && ord c <= ord 'z')
+lower c = ord 'a' <= ord c && ord c <= ord 'z'
 
 -- | Check if a character is an uppercase letter.
 upper :: Char -> Bool
-upper c = (ord 'A' <= ord c && ord c <= ord 'Z')
+upper c = ord 'A' <= ord c && ord c <= ord 'Z'
 
 -- | Convert an uppercase letter to the corresponding lowercase letter. For
 -- other characters, return the original character.
@@ -44,9 +42,7 @@ convToLower c   | upper c       = intToLower (upperToInt c)
 
 -- | Count the number of lowercase letters in a string.
 numberOfLowers :: String -> Int
-numberOfLowers []                   = 0
-numberOfLowers (c:cs)   | lower c   = 1 + numberOfLowers cs
-                        | otherwise = numberOfLowers cs
+numberOfLowers str = length [c | c <- str, lower c]
 
 -- | Shift a lowercase or an uppercase character by n (mod 26) with respect to
 -- its integer representation; returns a character of the same type.
@@ -79,9 +75,9 @@ percent m n = (fromIntegral m / fromIntegral n) * 100
 -- string. Both lower- and uppercase letters are taken into account.
 freqs :: String -> [Float]
 freqs str = [percent (count c lowerStr) n | c <- ['a'..'z']]
-            where
-              lowerStr  = map convToLower str
-              n         = numberOfLowers lowerStr
+    where
+        lowerStr  = map convToLower str
+        n         = numberOfLowers lowerStr
 
 -- | Compute chi^2 for two given lists (of the same length) of observed and
 -- expected values, respectively.
@@ -94,7 +90,7 @@ rotate n xs = drop n xs ++ take n xs
 
 -- | Given an object and a list, return a list containing all positions where
 -- this object occurs in the list (if any).
-positions :: Ord a => a -> [a] -> [Int]
+positions :: Eq a => a -> [a] -> [Int]
 positions x ys = [k | (k, y) <- zip [0..] ys, y == x]
 
 -- | Crack the Caesar cipher, i.e., given a string encoded using this method,
@@ -117,3 +113,4 @@ toggleCase c    | lower c   = intToUpper (lowerToInt c)
                 | upper c   = intToLower (upperToInt c)
                 | otherwise = c
 --}
+

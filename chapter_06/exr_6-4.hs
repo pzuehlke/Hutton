@@ -4,6 +4,11 @@
 
 euclid :: Int -> Int -> Int
 euclid m 0      = m
-euclid 0 n      = n  
-euclid m n  | m >= n    = euclid n (m - n)
-            | otherwise = euclid m (n - m)
+euclid 0 n      = n
+euclid m n      | n <= m    = euclid (m - n) n
+                | otherwise = euclid m (n - m)
+
+-- A better version:
+euclid' :: Int -> Int -> Int
+euclid' m 0      = m
+euclid' m n      = euclid n (m `mod` n)

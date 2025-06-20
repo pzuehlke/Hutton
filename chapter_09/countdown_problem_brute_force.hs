@@ -1,1 +1,0 @@
-/home/pedroz/Dokumente/eigene/haskell/hutton/countdown_problem_brute_force.hs
