@@ -9,6 +9,7 @@ import Data.List
 
 -- Sample list of ballots. Each person may vote in as many distinct candidates
 -- as they want, in order of decreasing preference.
+-- Expected winners: "Green", "Blue" and "Yellow"
 ballots :: [[String]]
 ballots = [["Red", "Green"]
           ,["Blue"]
@@ -16,9 +17,11 @@ ballots = [["Red", "Green"]
           ,["Blue", "Green", "Red"]
           ,["Green", "Blue", "Red"]
           ,["Blue", "Green", "Red"]
+          ,[]
           ,["Purple", "Yellow"]
           ,["Orange", "Yellow"]
-          ,["Gray", "Yellow"]]
+          ,["Gray", "Yellow"]
+          ,[]]
 
 -- | Given a list, delete all duplicates occurring in it, so that each of the
 -- original elements appears exactly once.
@@ -42,23 +45,22 @@ eliminate x = map (filter (/= x))
 -- occurs in it. For example:
 -- minVotes [1, 1, 2, 2, 2, 3, 3] = 2.
 minVotes :: Eq a => [a] -> Int
-minVotes vs = (head . sort) [count v vs | v <- vs]
+minVotes vs = (head . sort) [count v vs | v <- removeDuplicates vs]
 
 -- | Given a list of lists, returns a list consisting of the elements occurring
 -- in the 0-th position of each of the original lists.
-firstChoices :: [[a]] -> [a]
-firstChoices = map head
+firstChoices :: Eq a => [[a]] -> [a]
+firstChoices = map head . removeEmpty
 
 -- | Given a list of ballots, determines the loser(s) of the present round.
 -- More explicitly, it filters from the ballots all of those candidates which
--- received the least number of "first choice" votes, along with all
--- candidates which received no "first choice" votes at all.
+-- received the least number of "first choice" votes.
 losers :: Ord a => [[a]] -> [a]
-losers bs = sort [v | v <- cands, count v firsts <= minv]
-            where
-              cands = removeDuplicates (concat bs)
-              firsts = firstChoices bs
-              minv = minVotes firsts
+losers ballots = sort [v | v <- candidates, count v firsts == least_firsts]
+    where
+        candidates = removeDuplicates (concat ballots)
+        firsts = firstChoices ballots
+        least_firsts = minVotes firsts
 
 -- | Decides whether a list contains some element.
 notElem' :: Eq a => [a] -> a -> Bool
@@ -77,5 +79,5 @@ occur = removeDuplicates . concat
 
 -- | Determines the winner(s) of the election.
 winners :: Ord a => [[a]] -> [a]
-winners bs  | nextRound bs /= []    = winners (nextRound bs)
-            | otherwise             = occur bs
+winners ballots  | nextRound ballots /= []    = winners (nextRound ballots)
+            | otherwise             = occur ballots

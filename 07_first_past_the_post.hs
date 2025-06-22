@@ -17,9 +17,9 @@ count x = length . filter (== x)
 
 -- | Given a list, deletes all duplicates occurring in it so that each of the
 -- original elements appears exactly once.
-removeDuplicates :: Eq a => [a] -> [a]
-removeDuplicates []     = []
+removeDuplicates Eq a => [a] -> [a]
 removeDuplicates (x:xs) = x : filter (/= x) (removeDuplicates xs)
+removeDuplicates []     = []
 
 -- | Determines the maximum number of votes received by a candidate.
 maxVotes :: Eq a => [a] -> Int

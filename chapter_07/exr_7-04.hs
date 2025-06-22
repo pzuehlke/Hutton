@@ -3,4 +3,4 @@
 ------------------------------------------------------
 
 decToInt :: [Int] -> Int
-decToInt = foldl (\a b -> 10 * a + b) 0
+decToInt = foldl (\n digit -> 10 * n + digit) 0
