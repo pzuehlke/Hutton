@@ -19,8 +19,14 @@ occurs x (Node l y r)   = case compare x y of
 
 -- To answer the question posed at the end of the statement: It is hard to know
 -- which function is more efficient without knowing more about how GHC works.
--- However, the preceding function only compares x and y once, and then returns
+--
+-- The preceding function only compares x and y once, and then returns
 -- the answer depending on which of only three possibilities takes place. In
 -- the original definition, x and y is compared to y _twice_ (unless x == y). I
 -- suppose that if, e.g., the two integers are large, then the preceding
 -- function would be more efficient for this reason.
+--
+-- However, even though we are treating `compare` as a black box, in practice
+-- its implementation would probably involve the same two comparisons x == y
+-- and x < y as in the original version. In this case, there would no advantage
+-- to using the newer version.

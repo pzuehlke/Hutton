@@ -13,12 +13,16 @@ e1 :: Expr
 e1 = Add (Add (Val 1) (Val 2)) (Val 3)
 
 e2 :: Expr
--- 1 + (2 * 3) = 7
-e2 = Add (Val 1) (Mul (Val 2) (Val 3))
+-- 2 + (3 + 4) = 9
+e2 = Add (Val 2) (Add (Val 2) (Val 4))
 
 e3 :: Expr
+-- 1 + (2 * 3) = 7
+e3 = Add (Val 1) (Mul (Val 2) (Val 3))
+
+e4 :: Expr
 -- (1 + 2) * 3 = 9
-e3 = Mul (Add (Val 1) (Val 2)) (Val 3)
+e4 = Mul (Add (Val 1) (Val 2)) (Val 3)
 
 
 eval :: Expr -> Cont -> Int
