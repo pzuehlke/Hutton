@@ -6,8 +6,7 @@
 -- omitting some of its elements, in a possibly different order.
 isChoice :: Eq a => [a] -> [a] -> Bool
 isChoice [] _                       = True
-isChoice (x:xs) ys  | x `elem` ys   = isChoice xs (remove x ys)
-                    | otherwise     = False
+isChoice (x:xs) ys = x `elem` ys && isChoice xs (remove x ys)
 
 -- | Removes the first instance of a given object from a given list in case
 -- this object is in fact an element of the list; if it is not, returns the
