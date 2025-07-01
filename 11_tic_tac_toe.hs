@@ -20,8 +20,8 @@ type Grid = [[Player]]
 
 next :: Player -> Player
 next O = X
-next B = B
 next X = O
+next B = B
 
 ----------------------
 --  Grid Utilities  --

@@ -8,9 +8,10 @@ putBoard :: Board -> IO ()
 putBoard board = putBoardIter board 1
 
 putBoardIter :: Board -> Int -> IO ()
-putBoardIter [] _       = return ()
-putBoardIter (n:ns) k   = do putStr (show k)
-                             putStr ": "
-                             putStrLn (replicate n '*')
-                             putBoardIter ns (k + 1)
-                             return ()
+putBoardIter [] _                   = return ()
+putBoardIter (num_stars:ns) row     = do
+    putStr (show row)
+    putStr ":"
+    putStrLn (concat (replicate num_stars " *"))
+    putBoardIter ns (row + 1)
+    return ()

@@ -5,28 +5,31 @@
 import System.IO
 
 getCh :: IO Char
-getCh = do hSetEcho stdin False
-           x <- getChar
-           hSetEcho stdin True
-           return x
+getCh = do
+    hSetEcho stdin False
+    char <- getChar
+    hSetEcho stdin True
+    return char
 
 readLine :: IO String
-readLine = do c <- getCh
-              if c == '\n' then
-                do putChar c
-                   return ""
-              else if c == '\DEL' then
-                do putStr "\b \b"
--- Note that '\b' is a _non-destructive_ backspace, hence the string "\b \b"
--- moves one character leftward, replaces it by a space, and then moves
--- leftward again to await a new input.
-                   cs <- readLine
-                   return ('\DEL':cs)
-              else
-                do putChar c
-                   cs <- readLine
-                   return (case cs of
-                             [] -> [c]
-                             ('\DEL':ds) -> ds
-                             otherwise -> (c:cs)
-                          )
+readLine = do
+    c <- getCh
+    case c of
+        '\n' -> do
+            putChar c
+            return ""
+        '\DEL' -> do
+            putStr "\b \b"
+            -- Note that '\b' is a _non-destructive_ backspace, hence the
+            -- string "\b \b" moves one character leftward, replaces it by
+            -- a space, and then moves leftward again to await a new input.
+            restOfLine <- readLine
+            return ('\DEL':restOfLine)
+        _ ->  do
+            putChar c
+            text <- readLine
+            return (case text of
+                [] -> [c]
+                ('\DEL':rest) -> rest   -- c was deleted, shouldn't be returned
+                otherwise -> (c:text)
+                )
