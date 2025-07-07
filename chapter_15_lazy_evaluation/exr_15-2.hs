@@ -1,0 +1,17 @@
+-------------------------------------------------------
+--  Exercise 15.2 - Programming in Haskell - Hutton  --
+-------------------------------------------------------
+
+-- Using outermost evaluation in fst (1 + 2, 2 + 3), the calculation proceeds
+-- as follows:
+--      fst (1 + 2, 2 + 3)  {application of fst}
+--  =   1 + 2               {application of (+)}
+--  =   3
+--
+-- Using innermost evaluation, it proceeds as follows:
+--      fst (1 + 2, 2 + 3)  {leftmost application of (+)}
+--  =   fst (3, 2 + 3)      {application of (+)}
+--  =   fst (3, 5)          {application of fst}
+--  =   3
+-- 
+-- Thus, using outermost evaluation, the evaluation of `2 + 3` is avoided.

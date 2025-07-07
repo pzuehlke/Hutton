@@ -6,19 +6,23 @@
 -- (a) 1 + (2 * 3)
 -- The reducible expressions are:
 --      # The entire expression, which is outermost;
---      # '2 * 3', which is innermost.
+--      # `2 * 3`, which is innermost.
 --
 -- (b) (1 + 2) * (2 + 3)
 -- The reducible expressions are:
 --      # The entire expression, which is outermost;
---      # '1 + 2' and '2 + 3', which are innermost.
+--      # `1 + 2` and `2 + 3`, which are innermost.
 --
 -- (c) fst (1 + 2, 2 + 3)
 -- The reducible expressions are:
 --      # The entire exprsesion, which is outermost;
---      # '1 + 2' and '2 + 3', which are innermost.
+--      # `1 + 2` and `2 + 3`, which are innermost.
+-- I believe that (1 + 2, 2 + 3) is an expression, but not reducible. Even
+-- though it can be seen as the tuple constructor applied to its two
+-- components, it can't be further "reduced" by performing the application; in
+-- a sense it is already evaluated.
 --
 -- (d) (\x -> 1 + x) (2 * 3)
 -- The reducible expressions are:
 --      # The entire expression, which is outermost;
---      # '2 * 3', which is innermost.
+--      # `2 * 3`, which is innermost.
