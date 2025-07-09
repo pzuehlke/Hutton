@@ -10,7 +10,9 @@ initial = 1.0
 -- | Custom version of iterate, for practice:
 -- iterate f x = [x, f x, f (f x), f (f (f x)), ...]
 iterate' :: (a -> a) -> a -> [a]
-iterate' f x = x : (map f (iterate' f x))
+iterate' f x = x : map f (iterate' f x)
+-- or:
+-- iterate' f x = x : iterate' f (f x)
 
 -- | Calculates an approximation to the square root of a floating-point number
 -- using Heron's (a special case of Newton's) method. Begins with `initial` as
