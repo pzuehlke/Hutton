@@ -1,20 +1,17 @@
--------------------
---  Tic Tac Toe  --
--------------------
+------------------------------
+--  Unbeatable Tic Tac Toe  --
+------------------------------
 
 import Data.Char
 import Data.List
 import System.IO
 
---------------------------
---  Basic declarations  --
---------------------------
+-- Basic declarations
 
 size :: Int
 size = 3
 
-data Player = O | B | X
-    deriving (Eq, Ord, Show)
+data Player = O | B | X deriving (Eq, Ord, Show)
 
 type Grid = [[Player]]
 
@@ -23,9 +20,7 @@ next O = X
 next X = O
 next B = B
 
-----------------------
---  Grid Utilities  --
-----------------------
+-- Grid utilities
 
 type Pos = (Int, Int)
 
@@ -40,21 +35,20 @@ empty = replicate size (replicate size B)
 
 full :: Grid -> Bool
 full = all (/= B) . concat
+-- full = all (all (/= B))
 
 turn :: Grid -> Player
-turn grid = if os <= xs then O else X
-  where
+turn grid = if os <= xs then O else X where
     os = length (filter (== O) squares)
     xs = length (filter (== X) squares)
     squares = concat grid
 
 wins :: Player -> Grid -> Bool
-wins player grid = any filled (rows ++ columns ++ diagonals)
-  where
-    filled = all (== player)
-    rows = grid
-    columns = transpose grid
-    diagonals = [diag grid, diag (map reverse grid)]
+wins player grid = any (all (== player)) lines where
+    lines = horizontals ++ verticals ++ diagonals
+    diagonals   = [diag grid, diag (map reverse grid)]
+    horizontals = grid
+    verticals   = transpose grid
 
 diag :: Grid -> [Player]
 diag grid = [grid !! n !! n | n <- [0..(size - 1)]]
@@ -62,9 +56,7 @@ diag grid = [grid !! n !! n | n <- [0..(size - 1)]]
 won :: Grid -> Bool
 won grid = wins O grid || wins X grid
 
--------------------------
---  Displaying a grid  --
--------------------------
+-- Displaying a grid
 
 interleave :: a -> [a] -> [a]
 interleave _ []     = []
@@ -77,64 +69,78 @@ showPlayer B = ["   ", "   ", "   "]
 showPlayer X = ["   ", " X ", "   "]
 
 showRow :: [Player] -> [String]
-showRow = beside . interleave bar . map showPlayer
-  where
+showRow = beside . interleave bar . map showPlayer where
     beside = foldr1 (zipWith (++))
     bar = replicate 3 "|"
 
 putGrid :: Grid -> IO ()
-putGrid = putStrLn . unlines . concat . interleave bar . map showRow
-  where
+putGrid = putStrLn . unlines . concat . interleave bar . map showRow where
     bar = [replicate ((size * 4) - 1) '-']
 
----------------------
---  Making a move  --
----------------------
+-- Making a move
 
 valid :: Grid -> Int -> Bool
 valid grid i = 0 <= i && i < size^2 && concat grid !! i == B
 
 move :: Grid -> Int -> Player -> [Grid]
-move grid i p = if valid grid i then [chop size (xs ++ [p] ++ ys)] else []
-  where (xs, B:ys) = splitAt i (concat grid)
+move grid i p =
+    if valid grid i then [chop size (xs ++ [p] ++ ys)] else [] where
+        (xs, B:ys) = splitAt i (concat grid)
 
 chop :: Int -> [a] -> [[a]]
 chop n [] = []
 chop n xs = take n xs : chop n (drop n xs)
 
-------------------------
---  Reading a number  --
-------------------------
+-- Reading a number
 
 getNat :: String -> IO Int
-getNat prompt = do putStr prompt
-                   xs <- getLine
-                   if xs /= [] && all isDigit xs then
-                       return (read xs)
-                   else
-                       do putStrLn "ERROR: Invalid number"
-                          getNat prompt
+getNat prompt = do
+    putStr prompt
+    xs <- getLine
+    if xs /= "" && all isDigit xs
+        then return (read xs)
+        else do
+            putStrLn "ERROR: Invalid number"
+            getNat prompt
 
+-- Playing the game
 
 ticTacToe :: IO ()
 ticTacToe = run empty O
 
 run :: Grid -> Player -> IO ()
-run grid player = do cls
-                     goto (1, 1)
-                     putGrid grid
-                     run' grid player
+run grid player = do
+    cls
+    goto (1, 1)
+    putGrid grid
+    run' grid player
 
 run' :: Grid -> Player -> IO ()
-run' grid player    | wins O grid = putStrLn "Player O wins!\n"
-                    | wins X grid = putStrLn "Player X wins!\n"
-                    | full grid   = putStrLn "It's a draw!\n"
-                    | otherwise   = 
-                        do i<- getNat (prompt player)
-                           case move grid i player of
-                             [] -> do putStrLn "ERROR: Invalid move"
-                                      run' grid player
-                             [grid'] -> run grid' (next player)
+run' grid player
+    | wins O grid   = putStrLn "Player O wins!\n"
+    | wins X grid   = putStrLn "Player X wins!\n"
+    | full grid     = putStrLn "It's a draw!\n"
+    | otherwise     = do
+        i <- getNat (prompt player)
+        case move grid i player of
+            [] -> do
+                putStrLn "ERROR: Invalid move"
+                run' grid player
+                [grid'] -> run grid' (next player)
 
 prompt :: Player -> String
 prompt player = "Player " ++ show player ++ ", enter your move: "
+
+-- Game trees
+
+data Tree a = Node a [Tree a] deriving show
+
+gameTree :: Grid -> Player -> Tree Grid
+gameTree grid player = Node grid [gameTree grid' (next player) |
+                                  grid' <- moves grid player]
+
+moves :: Grid -> Player -> [Grid]
+moves grid player
+    | won  grid     = []
+    | full grid     = []
+    | otherwise     = concat [move grid i player | i <- [0..(size^2 - 1)]]

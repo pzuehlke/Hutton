@@ -5,106 +5,69 @@
 data Maybe a = Just a | Nothing
 
 instance Functor Maybe where
-  fmap _ Nothing  = Nothing
-  fmap f (Just x) = Just (f x)
+    -- fmap :: (a -> b) -> Maybe a -> Maybe b
+    fmap _ Nothing  = Nothing
+    fmap f (Just x) = Just (f x)
 
 instance Applicative Maybe where
-  pure = Just
-  Nothing <*> _       = Nothing
-  (Just f) <*> mx     = fmap f mx
+    -- pure :: a -> Maybe a
+    pure = Just
+    -- (<*>) :: Maybe (a -> b) -> Maybe a -> Maybe b
+    Nothing <*> _       = Nothing
+    (Just f) <*> mx     = fmap f mx
 
--- Theorem: Applicative laws for Maybe:
---          (i)   pure id <*> v = v                    (identity)
---          (ii)  pure (.) <*> u <*> v <*> w = u <*> (v <*> w)  (composition)
---          (iii) pure f <*> pure x = pure (f x)      (homomorphism)
---          (iv)  u <*> pure y = pure ($ y) <*> u     (interchange)
+-- Theorem: The applicative laws for Maybe hold:
+-- (i)     pure id <*> mx = mx
+-- (ii)    pure (g x) = pure g <*> pure x
+-- (iii)   mh <*> pure y = pure (\g -> g y) <*> mh
+-- (iv)    mh <*> (mg <*> mx) = (pure (.) <*> mh <*> mg) <*> mx
 --
--- Proof:
--- (i) Identity law: By case analysis on v:
---      pure id <*> Nothing      {applying pure, <*>}
---    = Just id <*> Nothing      {applying <*>}
---    = Nothing
+-- Proof: In all cases, it is easier to figure out how to proceed by beginning
+-- with the more complicated expression of the two.
 --
---      pure id <*> (Just x)     {applying pure, <*>}
---    = Just id <*> (Just x)     {applying <*>}
---    = fmap id (Just x)         {applying fmap}
---    = Just (id x)              {applying id}
---    = Just x
+-- (i)  pure id <*> mx      {applying pure}
+--    = Just id <*> mx      {applying <*>}
+--    = fmap id mx          {applying fmap, using an implicit case analysis}
+--    = mx                  []
 --
--- (ii) Composition law: By case analysis on u:
---      pure (.) <*> Nothing <*> v <*> w    {applying pure, <*>}
---    = Just (.) <*> Nothing <*> v <*> w    {applying <*>}
---    = Nothing <*> v <*> w                 {applying <*>}
---    = Nothing <*> w                       {applying <*>}
---    = Nothing
+-- (ii) pure g <*> pure x   {applying pure twice}
+--    = Just g <*> Just x   {applying <*>}
+--    = fmap g (Just x)     {applying fmap}
+--    = Just (g x)          {unapplying pure}
+--    = pure (g x)          [] 
 --
---      Nothing <*> (v <*> w)    {applying <*>}
---    = Nothing
+-- (iii) Notice that mh is of type Maybe (a -> b) (see exercise 12-5).
+--       pure (\g -> g y) <*> mh    {applying pure}
+--     = Just (\g -> g y) <*> mh    {applying <*>}
+--     = fmap (\g -> g y) mh        {... to be continued}
+--       Now we need to consider the two cases for mh separately:
+--           * If mh = Nothing, then continuing we get:
+--             = fmap (\g -> g y) Nothing   {applying fmap}
+--             = Nothing                    {unapplying <*>}
+--             = Nothing <*> pure y         {hypothesis: mh = Nothing}
+--             = mh <*> pure y              []
+--           * If mh = Just h, then continuing we get:
+--             = fmap (\g -> g y) (Just h)  {applying fmap}
+--             = Just ((\g -> g y) h)       {applying the lambda}
+--             = Just (h y)                 {unappyling fmap}
+--             = fmap h (Just y)            {unapplying <*>}
+--             = (Just h) <*> (Just y)      {unapplying pure}
+--             = (Just h) <*> pure y        {hypothesis: mh = Just h}
+--             = mh <*> pure y              []
 --
---      Case u = Just f: By case analysis on v:
---      pure (.) <*> (Just f) <*> Nothing <*> w    {applying pure, <*>}
---    = Just (.) <*> (Just f) <*> Nothing <*> w    {applying <*>}
---    = fmap (.) (Just f) <*> Nothing <*> w        {applying fmap}
---    = Just ((.) f) <*> Nothing <*> w             {applying <*>}
---    = Nothing <*> w                              {applying <*>}
---    = Nothing
+-- (iv) Here:
+--      * mh :: Maybe (b -> c)
+--      * mg :: Maybe (a -> b)
+--      * mx :: Maybe a
 --
---      (Just f) <*> (Nothing <*> w)    {applying <*>}
---    = (Just f) <*> Nothing           {applying <*>}
---    = Nothing
+--      It would be tedious to do a case-by-case analysis since there are 8
+--      possibilities to consider, so we can instead argue as follows. Notice
+--      from the definition of <*> (and of fmap) that a Nothing in either
+--      argument propagates to make the result Nothing as well. Therefore if
+--      either mh, mg or mx is Nothing, both sides will evaluate to Nothing.
 --
---      Case u = Just f, v = Just g: By case analysis on w:
---      pure (.) <*> (Just f) <*> (Just g) <*> Nothing    {applying pure, <*>}
---    = Just (.) <*> (Just f) <*> (Just g) <*> Nothing    {applying <*>}
---    = fmap (.) (Just f) <*> (Just g) <*> Nothing        {applying fmap}
---    = Just ((.) f) <*> (Just g) <*> Nothing             {applying <*>}
---    = fmap ((.) f) (Just g) <*> Nothing                 {applying fmap}
---    = Just (((.) f) g) <*> Nothing                      {applying <*>}
---    = Nothing
---
---      (Just f) <*> ((Just g) <*> Nothing)    {applying <*>}
---    = (Just f) <*> Nothing                  {applying <*>}
---    = Nothing
---
---      pure (.) <*> (Just f) <*> (Just g) <*> (Just x)    {applying pure, <*>}
---    = Just (.) <*> (Just f) <*> (Just g) <*> (Just x)    {applying <*>}
---    = fmap (.) (Just f) <*> (Just g) <*> (Just x)        {applying fmap}
---    = Just ((.) f) <*> (Just g) <*> (Just x)             {applying <*>}
---    = fmap ((.) f) (Just g) <*> (Just x)                 {applying fmap}
---    = Just (((.) f) g) <*> (Just x)                      {applying <*>}
---    = fmap (((.) f) g) (Just x)                          {applying fmap}
---    = Just ((((.) f) g) x)                               {applying (.)}
---    = Just (f (g x))
---
---      (Just f) <*> ((Just g) <*> (Just x))    {applying <*>}
---    = (Just f) <*> (fmap g (Just x))         {applying fmap}
---    = (Just f) <*> (Just (g x))              {applying <*>}
---    = fmap f (Just (g x))                    {applying fmap}
---    = Just (f (g x))                         []
---
--- (iii) Homomorphism law:
---      pure f <*> pure x        {applying pure}
---    = Just f <*> Just x        {applying <*>}
---    = fmap f (Just x)          {applying fmap}
---    = Just (f x)               {unapplying pure}
---    = pure (f x)               []
---
--- (iv) Interchange law: By case analysis on u:
---      Nothing <*> pure y       {applying pure}
---    = Nothing <*> Just y       {applying <*>}
---    = Nothing
---
---      pure ($ y) <*> Nothing   {applying pure, <*>}
---    = Just ($ y) <*> Nothing   {applying <*>}
---    = Nothing
---
---      (Just f) <*> pure y      {applying pure}
---    = (Just f) <*> Just y      {applying <*>}
---    = fmap f (Just y)          {applying fmap}
---    = Just (f y)
---
---      pure ($ y) <*> (Just f)  {applying pure, <*>}
---    = Just ($ y) <*> (Just f)  {applying <*>}
---    = fmap ($ y) (Just f)      {applying fmap}
---    = Just (($ y) f)           {applying $}
---    = Just (f y)               []
+--      On the other hand, if they are all of the form (Just _), then it also
+--      follows from the definitions that <*> is just the usual function
+--      application on the naked values, with `Just` tagged at the end.
+--      Therefore, in this case the left side equals Just (h (g x)), while the
+--      right side equals Just ((h . g) x), which clearly coincide.     []

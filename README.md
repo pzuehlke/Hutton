@@ -1,6 +1,6 @@
 # *Programming in Haskell*
 
-The repository contains solutions to all of the exercises in Prof. Graham Hutton's [_Programming in Haskell_](https://www.cs.nott.ac.uk/~pszgmh/pih.html) (2nd ed.), along with several related scripts. The most substantial projects or exercises are collected in a separate folder.
+The repository contains solutions to all of the exercises in Prof. Graham Hutton's [_Programming in Haskell_](https://www.cs.nott.ac.uk/~pszgmh/pih.html) (2nd ed.), along with several related scripts. The most substantial projects are collected in a separate folder.
 
 In your quest to achieve monadic enlightenment, you may find the following koan from p. 170 of the book to be helpful:
 
