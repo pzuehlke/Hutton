@@ -158,6 +158,93 @@ pure (.) <*> h <*> g :: F (a -> c)
 
 -- SECTION 12.3
 
+data Expr = Val Int | Div Expr Expr
 
+{-
+eval :: Expr -> Int
+eval (Val n)    = n
+eval (Div x y)  = eval x `div` eval y
+-}
+
+safeDiv :: Int -> Int -> Maybe Int
+safeDiv _ 0 = Nothing
+safeDiv n m = Just (n `div` m)
+
+eval :: Expr -> Maybe Int
+eval (Val n)    = Just n
+eval (Div x y)  =
+    case eval x of
+        Nothing -> Nothing
+        Just n  -> case eval y of
+                       Nothing -> Nothing
+                       Just m  -> safeDiv n m
+
+{-
+eval :: Expr -> Maybe Int
+eval (Val n)    = pure n
+eval (Div x y)  = pure safeDiv <*> eval x <*> eval y
+-}
+
+(>>=) :: Maybe a -> (a -> Maybe b) -> Maybe b
+mx >>= case mx of
+           Nothing -> Nothing
+           Just x -> f x
+
+eval :: Expr -> Maybe Int
+eval (Val n)    = Just n
+eval (Div x y)  = eval x >>= \n ->
+                  eval y >>= \m ->
+                  safeDiv n m
+
+{-
+m1 >>= \x1 ->
+m2 >>= \x2 ->
+.
+.
+.
+mn >>= \xn ->
+f x1 x2 ... xn
+-}
+
+{-
+do
+    x1 <- m1
+    x2 <- m2
+    .
+    .
+    .
+    xn <- mn
+    f x1 x2 ... xn
+-}
+
+eval :: Expr -> Maybe Int
+eval (Val n)    = Just n
+eval (Div x y)  = do
+    n <- eval x
+    m <- eval y
+    safeDiv n m
+
+class Applicative m => Monad m where
+    return :: a -> m a
+    (>>=) :: ma -> (a -> m b) -> m b
+
+    return = pure
+
+-- Examples
+
+instance Monad Maybe where
+    -- (>>=) :: Maybe a -> (a -> Maybe b) -> Maybe b
+    Nothing >>= _   = Nothing
+    Just x  >>= f   = f x
+
+instance Monad [] where
+    -- (>>=) :: [a] -> (a -> [b]) -> [b]
+    xs >>= f = [y | x <- xs, y <- f x]
+
+pairs :: [a] -> [b] -> [(a, b)]
+pairs xs ys = do
+    x <- xs
+    y <- ys
+    return (x, y)
 
 

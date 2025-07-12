@@ -16,7 +16,7 @@ instance Applicative Maybe where
     Nothing <*> _       = Nothing
     (Just f) <*> mx     = fmap f mx
 
--- Theorem: The applicative laws for Maybe hold:
+-- Theorem: The applicative laws hold for Maybe:
 -- (i)     pure id <*> mx = mx
 -- (ii)    pure (g x) = pure g <*> pure x
 -- (iii)   mh <*> pure y = pure (\g -> g y) <*> mh
@@ -25,18 +25,27 @@ instance Applicative Maybe where
 -- Proof: In all cases, it is easier to figure out how to proceed by beginning
 -- with the more complicated expression of the two.
 --
--- (i)  pure id <*> mx      {applying pure}
+-- (i)  We need to prove that
+--          pure id <*> mx = mx.
+--
+--      pure id <*> mx      {applying pure}
 --    = Just id <*> mx      {applying <*>}
 --    = fmap id mx          {applying fmap, using an implicit case analysis}
 --    = mx                  []
 --
--- (ii) pure g <*> pure x   {applying pure twice}
+-- (ii) We need to prove that
+--          pure (g x) = pure g <*> pure x.
+--
+--      pure g <*> pure x   {applying pure twice}
 --    = Just g <*> Just x   {applying <*>}
 --    = fmap g (Just x)     {applying fmap}
 --    = Just (g x)          {unapplying pure}
 --    = pure (g x)          [] 
 --
--- (iii) Notice that mh is of type Maybe (a -> b) (see exercise 12-5).
+-- (iii) We need to prove that
+--          mh <*> pure y = pure (\g -> g y) <*> mh.
+--       Notice that mh is of type Maybe (a -> b) (see exercise 12-5).
+--
 --       pure (\g -> g y) <*> mh    {applying pure}
 --     = Just (\g -> g y) <*> mh    {applying <*>}
 --     = fmap (\g -> g y) mh        {... to be continued}
@@ -55,19 +64,23 @@ instance Applicative Maybe where
 --             = (Just h) <*> pure y        {hypothesis: mh = Just h}
 --             = mh <*> pure y              []
 --
--- (iv) Here:
+-- (iv) We need to prove that
+--          mh <*> (mg <*> mx) = (pure (.) <*> mh <*> mg) <*> mx
+--      Here (cf. exercise 12-5):
 --      * mh :: Maybe (b -> c)
 --      * mg :: Maybe (a -> b)
 --      * mx :: Maybe a
 --
 --      It would be tedious to do a case-by-case analysis since there are 8
 --      possibilities to consider, so we can instead argue as follows. Notice
---      from the definition of <*> (and of fmap) that a Nothing in either
---      argument propagates to make the result Nothing as well. Therefore if
---      either mh, mg or mx is Nothing, both sides will evaluate to Nothing.
+--      from the definition of <*> (and of fmap) that if either of the operands
+--      is Nothing, then the result of an <*> operation will also be Nothing.
+--      It follows that any of mh, mg or mx is Nothing, this Nothing will
+--      propagate and both sides of the equation that we have to establish will
+--      evaluate to Nothing.
 --
---      On the other hand, if they are all of the form (Just _), then it also
---      follows from the definitions that <*> is just the usual function
---      application on the naked values, with `Just` tagged at the end.
---      Therefore, in this case the left side equals Just (h (g x)), while the
---      right side equals Just ((h . g) x), which clearly coincide.     []
+--      On the other hand, if mh, mg and mx are all of the form Just _, then
+--      it also follows from the definitions that <*> is simply the usual
+--      function application on the naked values, with `Just` tagged at the
+--      end. Therefore in this case the left side equals Just (h (g x)), while
+--      the right side equals Just ((h . g) x), which clearly coincide.     []

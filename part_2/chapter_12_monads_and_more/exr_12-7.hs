@@ -26,12 +26,18 @@ instance Applicative Expr where
     (Val m) <*> _ = Val m
     -- What else could the result be? Returning _ wouldn't be type-correct
     -- in general, except in case _ = Val n for some n. And setting
-    -- (Val m) <*> -- _ = Val 0 is also unnatural since we are working at a
-    -- level where we don't need to know that + over Int has a neutral element.
+    -- (Val m) <*> _ = Val 0 is also unnatural since we are working at a
+    -- level where we don't know that + over Int has a neutral element.
     --
-    -- And finally, with something of the form `Add` as the 1st argument.
-    -- The intuition is that (g + h)(x) = g(x) + h(x) (where x is arbitrary):
+    -- And finally, with something of the form `Add` as the 1st argument,
+    -- the intuition is that (g + h)(x) = g(x) + h(x) (where x is arbitrary):
     (Add eg eh) <*> _ = Add (eg <*> _) (eh <*> _)
 
 instance Monad Expr where
-    -- ...
+    -- (>>=) :: Expr a -> (a -> Expr b) -> Expr b
+    -- There is only one reasonable definition. Given an expression of type a
+    -- and a function f : A -> Expr b, apply f to each variable, leaving
+    -- integers unchanged.
+    Var x   >>= f   = f x
+    Val n   >>= _   = Val n
+    Add l r >>= f   = Add (l >>= f) (r >>= f)
