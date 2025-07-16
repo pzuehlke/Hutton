@@ -20,14 +20,14 @@ comp' e c = comp e ++ c
 -- Base case: e = Val n
 -- = comp' (Val n) c    {using the condition}
 -- = comp (Val n) ++ c  {applying comp}
--- = [PUSH n] ++ c      {unapplying cons}
+-- = [PUSH n] ++ c      {applying ++}
 -- = (PUSH n) : c
 --
 -- Inductive case: e = Add x y
 -- = comp' (Add x y) c                  {using the condition}
 -- = comp (Add x y) ++ c                {applying comp}
 -- = (comp x ++ comp y ++ [ADD]) ++ c   {associativity of ++}
--- = comp x ++ (comp y ++ ([ADD] ++ c)) {unapplying cons}
+-- = comp x ++ (comp y ++ ([ADD] ++ c)) {applying rightmost ++}
 -- = comp x ++ (comp y ++ (ADD : c))    {induction hypothesis}
 -- = comp x ++ (comp' y (ADD:c))        {induction hypothesis again}
 -- = comp' x (comp' y (ADD:c))          []

@@ -75,8 +75,8 @@ instance Applicative Maybe where
 --      possibilities to consider, so we can instead argue as follows. Notice
 --      from the definition of <*> (and of fmap) that if either of the operands
 --      is Nothing, then the result of an <*> operation will also be Nothing.
---      It follows that any of mh, mg or mx is Nothing, this Nothing will
---      propagate and both sides of the equation that we have to establish will
+--      It follows that if any of mh, mg or mx is Nothing, this Nothing will
+--      propagate and both sides of the equation that we need to establish will
 --      evaluate to Nothing.
 --
 --      On the other hand, if mh, mg and mx are all of the form Just _, then
