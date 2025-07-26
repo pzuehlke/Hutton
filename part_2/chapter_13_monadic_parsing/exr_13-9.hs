@@ -1,3 +1,21 @@
+-------------------------------------------------------
+--  Exercise 13.9 - Programming in Haskell - Hutton  --
+-------------------------------------------------------
+-- We use the code in exercise 13-7 as the starting point.
+-- We need to modify the parts involving uses of `beep` to add some more
+-- functionality, namely:
+-- * print an error message indicating the initial part of
+--   the string that caused the error;
+-- * wait for some time in order for the user to be able to read the message;
+-- * continue from where execution halted.
+-- There are only two types of errors that can occur in the original code:
+-- either the user presses a wrong button, or the expression fails to evaluate
+-- to an integer.
+--
+-- In summary, the only modifications are to the functions `calc` (line 262)
+-- and `evaluate` (line 297), and we also need to define a new function `wait`
+-- that does what its name suggests (line 276).
+
 import Control.Applicative
 import Data.Char
 import System.IO
@@ -133,6 +151,8 @@ nats = do
     return (n:ns)
 
 -- Arithmetic expressions
+-- We include the grammar rules again for guidance.
+-- expr     := term   (+ expr | - expr | eps)
 expr :: Parser Int
 expr = do
     t <- term
@@ -140,8 +160,13 @@ expr = do
         symbol "+"
         e <- expr
         return (t + e)
+      <|> do
+          symbol "-"
+          e <- expr
+          return (t - e)
       <|> return t
 
+-- term     := factor (* term | / term | eps)
 term :: Parser Int
 term = do
     f <- factor
@@ -149,21 +174,41 @@ term = do
         symbol "*"
         t <- term
         return (f * t)
+      <|> do
+          symbol "/"
+          t <- term  
+          if t == 0
+              then empty -- or: error "Division by zero!"
+              else return (f `div` t)
       <|> return f
 
+-- factor   := power  (^ factor | eps)
 factor :: Parser Int
 factor = do
+    p <- power
+    do
+        symbol "^"
+        f <- factor
+        if f < 0    -- avoid exponentiating by a negative exponent
+            then empty
+            else return (p ^ f)
+      <|> return p
+        
+-- power    := (expr) | int
+power :: Parser Int
+power = do
     symbol "("
     e <- expr
     symbol ")"
     return e
-  <|> natural
+  <|> integer
 
 eval :: String -> Int
 eval xs = case (parse expr xs) of
               [(n, [])]     -> n
               [(_, out)]    -> error ("Unused input " ++ out)
               []            -> error "Invalid input"
+
 
 -- Calculator
 type Pos = (Int, Int)
@@ -222,7 +267,14 @@ calc cs = do
         then process c cs
         else do
             beep
+            display ("Invalid: " ++ show c)
+            wait 5000000
+            display cs
             calc cs
+
+-- New function (cf. chapter 10, p. 137):
+wait :: Int -> IO ()
+wait n = sequence_ [return () | _ <- [1..n]]
 
 beep :: IO ()
 beep = putStr "\BEL"
@@ -246,8 +298,10 @@ evaluate :: String -> IO ()
 evaluate cs =
     case parse expr cs of
         [(n, [])] -> calc (show n)
-        _         -> do
+        [(_, s)]  -> do
             beep
+            display ("error: " ++ (take 6 s))
+            wait 5000000
             calc cs
 
 clear :: IO ()

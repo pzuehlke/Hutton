@@ -1,3 +1,16 @@
+--------------------------
+--  Monadic Calculator  --
+--------------------------
+-- A basic calculator that supports all five basic arithmetic operations on
+-- integers (+, -, *, / and ^). To use it, type `run` in ghci.
+--
+-- Here are the grammar rules for the parser:
+-- expr     := term   (+ expr | - expr | eps)
+-- term     := factor (* term | / term | eps)
+-- factor   := power  (^ factor | eps)
+-- power    := (expr) | int
+-- int      := ... | -2 | -1 | 0 | 1 | 2 | ...
+
 import Control.Applicative
 import Data.Char
 import System.IO
@@ -133,6 +146,8 @@ nats = do
     return (n:ns)
 
 -- Arithmetic expressions
+-- We include the grammar rules again for guidance.
+-- expr     := term   (+ expr | - expr | eps)
 expr :: Parser Int
 expr = do
     t <- term
@@ -140,8 +155,13 @@ expr = do
         symbol "+"
         e <- expr
         return (t + e)
+      <|> do
+          symbol "-"
+          e <- expr
+          return (t - e)
       <|> return t
 
+-- term     := factor (* term | / term | eps)
 term :: Parser Int
 term = do
     f <- factor
@@ -149,21 +169,41 @@ term = do
         symbol "*"
         t <- term
         return (f * t)
+      <|> do
+          symbol "/"
+          t <- term  
+          if t == 0
+              then empty -- or: error "Division by zero!"
+              else return (f `div` t)
       <|> return f
 
+-- factor   := power  (^ factor | eps)
 factor :: Parser Int
 factor = do
+    p <- power
+    do
+        symbol "^"
+        f <- factor
+        if f < 0    -- avoid exponentiating by a negative exponent
+            then empty
+            else return (p ^ f)
+      <|> return p
+        
+-- power    := (expr) | int
+power :: Parser Int
+power = do
     symbol "("
     e <- expr
     symbol ")"
     return e
-  <|> natural
+  <|> integer
 
 eval :: String -> Int
 eval xs = case (parse expr xs) of
               [(n, [])]     -> n
               [(_, out)]    -> error ("Unused input " ++ out)
               []            -> error "Invalid input"
+
 
 -- Calculator
 type Pos = (Int, Int)
@@ -222,7 +262,13 @@ calc cs = do
         then process c cs
         else do
             beep
+            display ("Invalid: " ++ show c)
+            wait 5000000
+            display cs
             calc cs
+
+wait :: Int -> IO ()
+wait n = sequence_ [return () | _ <- [1..n]]
 
 beep :: IO ()
 beep = putStr "\BEL"
@@ -246,8 +292,10 @@ evaluate :: String -> IO ()
 evaluate cs =
     case parse expr cs of
         [(n, [])] -> calc (show n)
-        _         -> do
+        [(_, s)]  -> do
             beep
+            display ("error: " ++ (take 6 s))
+            wait 5000000
             calc cs
 
 clear :: IO ()

@@ -1,3 +1,14 @@
+-------------------------------------------------------
+--  Exercise 13.6 - Programming in Haskell - Hutton  --
+-------------------------------------------------------
+-- Here are the updated grammar rules including subtraction and divivsion.
+-- Since they have the same level of priority as addition and multiplication,
+-- respectively, we do not need to add any new non-terminal symbols:
+
+-- expr     := term   (+ expr | - expr | eps)
+-- term     := factor (* term | / term | eps)
+-- factor   := (expr) | nat
+-- nat      := 0 | 1 | 2 | ...
 import Control.Applicative
 import Data.Char
 import System.IO
@@ -140,6 +151,10 @@ expr = do
         symbol "+"
         e <- expr
         return (t + e)
+      <|> do
+          symbol "-"
+          e <- expr
+          return (t - e)
       <|> return t
 
 term :: Parser Int
@@ -149,6 +164,12 @@ term = do
         symbol "*"
         t <- term
         return (f * t)
+      <|> do
+          symbol "/"
+          t <- term  
+          if t == 0
+              then empty -- error "Division by zero!"
+              else return (f `div` t)
       <|> return f
 
 factor :: Parser Int
@@ -164,6 +185,7 @@ eval xs = case (parse expr xs) of
               [(n, [])]     -> n
               [(_, out)]    -> error ("Unused input " ++ out)
               []            -> error "Invalid input"
+
 
 -- Calculator
 type Pos = (Int, Int)

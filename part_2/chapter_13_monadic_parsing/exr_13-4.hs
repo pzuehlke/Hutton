@@ -1,0 +1,15 @@
+-------------------------------------------------------
+--  Exercise 13.4 - Programming in Haskell - Hutton  --
+-------------------------------------------------------
+
+-- To understand how the final simplification on p. 189 dramatically improves
+-- the efficiency of the parser, consider for instance the parsing of an `expr`
+-- which is a `term`. Without the modification, the parser must consume the
+-- term and the next character (which will not be '+' by hypothesis), leading
+-- to failure; it must then rewind and read the term again. Moreover, this term
+-- could be extremely long. In contrast, with the modification, the term is
+-- read only once.
+--
+-- An analogous comment applies to the parsing of a `term` as a `factor` or a
+-- `factor` multiplied by a `term`: the factor could potentially need to be
+-- parsed twice without the modification.

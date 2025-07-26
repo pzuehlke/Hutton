@@ -17,7 +17,7 @@ count x = length . filter (== x)
 
 -- | Given a list, deletes all duplicates occurring in it so that each of the
 -- original elements appears exactly once.
-removeDuplicates Eq a => [a] -> [a]
+removeDuplicates :: Eq a => [a] -> [a]
 removeDuplicates (x:xs) = x : filter (/= x) (removeDuplicates xs)
 removeDuplicates []     = []
 

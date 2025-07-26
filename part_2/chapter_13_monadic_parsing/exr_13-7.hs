@@ -1,3 +1,21 @@
+-------------------------------------------------------
+--  Exercise 13.7 - Programming in Haskell - Hutton  --
+-------------------------------------------------------
+-- To achieve this extension, we can rewrite the grammar rules on p. 189 as:
+-- expr     := term   (+ expr | - expr | eps)
+-- term     := factor (* term | / term | eps)
+-- factor   := power  (^ factor | eps)
+-- power    := (expr) | int
+-- int      := ... | -2 | -1 | 0 | 1 | 2 | ...
+--
+-- Starting from the original version in the text, only the code for the
+-- respective parsers needs to be modified/included (it begins on line 153).
+--
+-- To check that ^ is indeed right associative, you can evaluate and compare
+-- 2^3^2, 2^(3^2) and (2^3)^2, but be careful with other choices (such as
+-- 2^3^4), because they may lead to overflow and evaluate to 0 (at least on my
+-- computer), causing the impression that there is something wrong.
+
 import Control.Applicative
 import Data.Char
 import System.IO
@@ -133,6 +151,8 @@ nats = do
     return (n:ns)
 
 -- Arithmetic expressions
+-- We include the grammar rules again for guidance.
+-- expr     := term   (+ expr | - expr | eps)
 expr :: Parser Int
 expr = do
     t <- term
@@ -140,8 +160,13 @@ expr = do
         symbol "+"
         e <- expr
         return (t + e)
+      <|> do
+          symbol "-"
+          e <- expr
+          return (t - e)
       <|> return t
 
+-- term     := factor (* term | / term | eps)
 term :: Parser Int
 term = do
     f <- factor
@@ -149,21 +174,41 @@ term = do
         symbol "*"
         t <- term
         return (f * t)
+      <|> do
+          symbol "/"
+          t <- term  
+          if t == 0
+              then empty -- or: error "Division by zero!"
+              else return (f `div` t)
       <|> return f
 
+-- factor   := power  (^ factor | eps)
 factor :: Parser Int
 factor = do
+    p <- power
+    do
+        symbol "^"
+        f <- factor
+        if f < 0    -- avoid exponentiating by a negative exponent
+            then empty
+            else return (p ^ f)
+      <|> return p
+        
+-- power    := (expr) | int
+power :: Parser Int
+power = do
     symbol "("
     e <- expr
     symbol ")"
     return e
-  <|> natural
+  <|> integer
 
 eval :: String -> Int
 eval xs = case (parse expr xs) of
               [(n, [])]     -> n
               [(_, out)]    -> error ("Unused input " ++ out)
               []            -> error "Invalid input"
+
 
 -- Calculator
 type Pos = (Int, Int)

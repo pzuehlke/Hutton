@@ -1,6 +1,6 @@
--------------------------------------------------------
+--------------------------------------------------------
 --  Exercise 16.11 - Programming in Haskell - Hutton  --
--------------------------------------------------------
+--------------------------------------------------------
 
 data Expr = Val Int | Add Expr Expr
 data Op = PUSH Int | ADD deriving Show
@@ -18,13 +18,13 @@ comp' e c = comp e ++ c
 -- specifies comp' using induction on the complexity/depth of the expression e:
 
 -- Base case: e = Val n
--- = comp' (Val n) c    {using the condition}
+--   comp' (Val n) c    {using the condition}
 -- = comp (Val n) ++ c  {applying comp}
 -- = [PUSH n] ++ c      {applying ++}
 -- = (PUSH n) : c
 --
 -- Inductive case: e = Add x y
--- = comp' (Add x y) c                  {using the condition}
+--   comp' (Add x y) c                  {using the condition}
 -- = comp (Add x y) ++ c                {applying comp}
 -- = (comp x ++ comp y ++ [ADD]) ++ c   {associativity of ++}
 -- = comp x ++ (comp y ++ ([ADD] ++ c)) {applying rightmost ++}

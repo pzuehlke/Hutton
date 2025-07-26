@@ -29,11 +29,13 @@ cls = putStr "\ESC[2J"
 
 goto :: Pos -> IO ()
 goto (x, y) = putStr ("\ESC[" ++ show y ++ ";" ++ show x ++ "H")
+
 empty :: Grid
 empty = replicate size (replicate size B)
 
 full :: Grid -> Bool
 full = all (/= B) . concat
+-- full = all (all (/= B))
 
 turn :: Grid -> Player
 turn grid = if os <= xs then O else X where
@@ -50,9 +52,6 @@ wins player grid = any (all (== player)) lines where
 
 diagonal :: Grid -> [Player]
 diagonal grid = [(grid !! i) !! i | i <- [0..(size - 1)]]
-
-won :: Grid -> Bool
-won grid = wins O grid || wins X grid
 
 -- Displaying a grid
 
@@ -124,7 +123,7 @@ run' grid player
             [] -> do
                 putStrLn "ERROR: Invalid move"
                 run' grid player
-                [grid'] -> run grid' (next player)
+            [grid'] -> run grid' (next player)
 
 prompt :: Player -> String
 prompt player = "Player " ++ show player ++ ", enter your move: "

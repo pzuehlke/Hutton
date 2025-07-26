@@ -1,6 +1,6 @@
-------------------------------
---  Unbeatable Tic Tac Toe  --
-------------------------------
+-------------------------------------------------------
+--  Exercise 11.3 - Programming in Haskell - Hutton  --
+-------------------------------------------------------
 
 import Data.Char
 import Data.List
@@ -35,7 +35,6 @@ empty = replicate size (replicate size B)
 
 full :: Grid -> Bool
 full = all (/= B) . concat
--- full = all (all (/= B))
 
 turn :: Grid -> Player
 turn grid = if os <= xs then O else X where
@@ -126,24 +125,28 @@ prune n (Node x children)   = Node x [prune (n - 1) tree | tree <- children]
 depth :: Int
 depth = 9
 
--- Minimax
-
-minimax :: Tree Grid -> Tree (Grid, Player)
+-- Minimax with depth - returns (Grid, Player, Depth)
+minimax :: Tree Grid -> Tree (Grid, Player, Int)
 minimax (Node grid [])
-    | wins O grid   = Node (grid, O) []
-    | wins X grid   = Node (grid, X) []
-    | otherwise     = Node (grid, B) []
+    | wins O grid       = Node (grid, O, 0) []
+    | wins X grid       = Node (grid, X, 0) []
+    | otherwise         = Node (grid, B, 0) []
 minimax (Node grid children)
-    | turn grid == O = Node (grid, minimum labels) children'
-    | turn grid == X = Node (grid, maximum labels) children' where
+    | turn grid == O    = Node (grid, O, minDepth + 1) children'
+    | turn grid == X    = Node (grid, X, minDepth + 1) children'
+    where
         children' = map minimax children
-        labels    = [player | Node (_, player) _ <- children']
+        winningDepths = [d | Node (_, turn grid, d) _ <- children']
+        minDepth = minimum winningDepths
+-- We are using that (Player, Int) is already ordered lexicographically
 
 bestMove :: Grid -> Player -> Grid
 bestMove grid player =
-    head [grid' | Node (grid', label) _ <- children, label == best] where
+    head [grid' | Node (grid', label, d) _ <- children, (label, d) == best]
+    where
         tree = prune depth (gameTree grid player)
-        Node (_, best) children = minimax tree
+        Node (_, bestLabel, bestDepth) children = minimax tree
+        best = (bestLabel, bestDepth)
 
 -- Playing the game
 
@@ -159,7 +162,6 @@ play grid player = do
     putGrid grid
     play' grid player
 
-
 play' :: Grid -> Player -> IO ()
 play' grid player
     | wins O grid   = putStrLn "Player O wins!\n"
@@ -174,7 +176,7 @@ play' grid player
             [grid'] -> play grid' (next player)
     | player == X   = do
         putStr "Player X is thinking... "
-        (play $! (bestMove grid player)) (next player)
+        play (bestMove grid player) (next player)
 
 prompt :: Player -> String
 prompt player = "Player " ++ show player ++ ", enter your move: "

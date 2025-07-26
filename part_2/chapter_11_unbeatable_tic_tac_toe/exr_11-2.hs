@@ -1,10 +1,45 @@
-------------------------------
---  Unbeatable Tic Tac Toe  --
-------------------------------
+-------------------------------------------------------
+--  Exercise 11.2 - Programming in Haskell - Hutton  --
+-------------------------------------------------------
 
 import Data.Char
 import Data.List
 import System.IO
+import System.Random (randomRIO)
+
+-- The function `bestMove` needs to be redefined. The idea is simple: instead
+-- of choosing the head of the list of grids that have the best label, we just
+-- choose a random index and extract the corresponding grid. However, because
+-- random number generation is impure, we need to modify the return type to
+-- IO Grid and use `do` notation.
+bestMove :: Grid -> Player -> IO Grid
+bestMove grid player = do
+    random <- randomRIO (0, length grids - 1)
+    return (grids !! random) where
+        grids = [grid' | Node (grid', label) _ <- children, label == best]
+        tree = prune depth (gameTree grid player)
+        Node (_, best) children = minimax tree
+
+-- Because of the change of the type, we also need to modify the last line of
+-- play':
+play' :: Grid -> Player -> IO ()
+play' grid player
+    | wins O grid   = putStrLn "Player O wins!\n"
+    | wins X grid   = putStrLn "Player X wins!\n"
+    | full grid     = putStrLn "It's a draw!\n"
+    | player == O   = do
+        i <- getNat (prompt player)
+        case move grid i player of
+            [] -> do
+                putStrLn "ERROR: Invalid move"
+                play' grid player
+            [grid'] -> play grid' (next player)
+    | player == X   = do
+        putStr "Player X is thinking... "
+        grid' <- bestMove grid player   -- new
+        play grid' (next player)        -- new
+
+-- The rest of the code is exactly as in the text.
 
 -- Basic declarations
 
@@ -139,12 +174,6 @@ minimax (Node grid children)
         children' = map minimax children
         labels    = [player | Node (_, player) _ <- children']
 
-bestMove :: Grid -> Player -> Grid
-bestMove grid player =
-    head [grid' | Node (grid', label) _ <- children, label == best] where
-        tree = prune depth (gameTree grid player)
-        Node (_, best) children = minimax tree
-
 -- Playing the game
 
 main :: IO ()
@@ -158,23 +187,6 @@ play grid player = do
     goto (1, 1)
     putGrid grid
     play' grid player
-
-
-play' :: Grid -> Player -> IO ()
-play' grid player
-    | wins O grid   = putStrLn "Player O wins!\n"
-    | wins X grid   = putStrLn "Player X wins!\n"
-    | full grid     = putStrLn "It's a draw!\n"
-    | player == O   = do
-        i <- getNat (prompt player)
-        case move grid i player of
-            [] -> do
-                putStrLn "ERROR: Invalid move"
-                play' grid player
-            [grid'] -> play grid' (next player)
-    | player == X   = do
-        putStr "Player X is thinking... "
-        (play $! (bestMove grid player)) (next player)
 
 prompt :: Player -> String
 prompt player = "Player " ++ show player ++ ", enter your move: "
