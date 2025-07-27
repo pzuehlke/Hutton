@@ -1,5 +1,5 @@
 ----------------------------------------------------
---  CAESAR CIPHER ENCODER AND DECODER IN HASKELL  --
+--  Caesar Cipher Encoder and Decoder in Haskell  --
 ----------------------------------------------------
 -- Suggested by the implementation described in chapter 5 of:
 -- Hutton, G. - Programming in Haskell
@@ -113,4 +113,3 @@ toggleCase c    | lower c   = intToUpper (lowerToInt c)
                 | upper c   = intToLower (upperToInt c)
                 | otherwise = c
 --}
-

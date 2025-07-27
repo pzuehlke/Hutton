@@ -6,7 +6,7 @@
 -- functionality, namely:
 -- * print an error message indicating the initial part of
 --   the string that caused the error;
--- * wait for some time in order for the user to be able to read the message;
+-- * wait some time in order for the user to be able to read the message;
 -- * continue from where execution halted.
 -- There are only two types of errors that can occur in the original code:
 -- either the user presses a wrong button, or the expression fails to evaluate
